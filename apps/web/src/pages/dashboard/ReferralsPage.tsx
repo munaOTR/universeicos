@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useAuth } from '@universe/auth'
 import { useReferralStats, useProfile } from '../../hooks/queries'
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@universe/ui'
@@ -85,14 +84,16 @@ export function ReferralsPage() {
             </div>
           ) : (
             <div className="divide-y divide-zinc-100">
-              {list.map((ref, index) => (
+              {list.map((ref, index) => {
+                const referred = (Array.isArray(ref.referred) ? ref.referred[0] : ref.referred) as { full_name?: string } | undefined
+                return (
                 <div key={index} className="py-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 font-bold text-sm shrink-0">
-                      {ref.referred?.full_name ? ref.referred.full_name.slice(0, 2).toUpperCase() : '??'}
+                      {referred?.full_name ? referred.full_name.slice(0, 2).toUpperCase() : '??'}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-zinc-900">{ref.referred?.full_name || 'Anonymous Student'}</p>
+                      <p className="text-sm font-semibold text-zinc-900">{referred?.full_name || 'Anonymous Student'}</p>
                       <p className="text-xs text-zinc-500">Joined {formatDistanceToNow(new Date(ref.created_at))} ago</p>
                     </div>
                   </div>
@@ -108,7 +109,8 @@ export function ReferralsPage() {
                     )}
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </CardContent>

@@ -37,7 +37,7 @@ export function CommandPalette() {
   const filteredItems = ADMIN_NAVIGATION.filter(
     (item) =>
       item.isEnabled &&
-      (item as any).roles?.includes(role as any) &&
+      (item as { roles?: string[] }).roles?.includes(role || '') &&
       item.label.toLowerCase().includes(query.toLowerCase())
   )
 

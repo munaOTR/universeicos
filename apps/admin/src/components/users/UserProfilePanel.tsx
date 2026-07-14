@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { env } from '../../config/env'
 import { getSupabaseClient } from '@universe/database'
 import type { User, VerificationReminder } from '@universe/types'
 import { Button, Badge, Spinner, toast } from '@universe/ui'
@@ -124,14 +125,12 @@ export function UserProfilePanel({ userId, onClose, onUpdate }: UserProfilePanel
       const token = session?.session?.access_token
       if (!token) throw new Error('Not authenticated')
 
-      const supabaseUrl = (supabase as any).supabaseUrl as string
-
-      const res = await fetch(`${supabaseUrl}/functions/v1/send-verification-reminder`, {
+      const res = await fetch(`${env.supabaseUrl}/functions/v1/send-verification-reminder`, {
         method:  'POST',
         headers: {
           'Content-Type':  'application/json',
           'Authorization': `Bearer ${token}`,
-          'apikey':        (supabase as any).supabaseKey as string,
+          'apikey':        env.supabaseAnonKey,
         },
         body: JSON.stringify({ user_id: userId, trigger_source: 'manual' }),
       })

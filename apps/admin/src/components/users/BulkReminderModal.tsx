@@ -5,6 +5,7 @@
  * Shows: eligible count, estimated quota usage, confirmation workflow.
  */
 import { useState, useEffect } from 'react'
+import { env } from '../../config/env'
 import { getSupabaseClient } from '@universe/database'
 import { Button, Spinner, toast } from '@universe/ui'
 import {
@@ -65,14 +66,12 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
       const token = session?.session?.access_token
       if (!token) throw new Error('Not authenticated')
 
-      const supabaseUrl = (supabase as any).supabaseUrl as string
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-verification-reminder`, {
+      const response = await fetch(`${env.supabaseUrl}/functions/v1/send-verification-reminder`, {
         method:  'POST',
         headers: {
           'Content-Type':  'application/json',
           'Authorization': `Bearer ${token}`,
-          'apikey':        (supabase as any).supabaseKey as string,
+          'apikey':        env.supabaseAnonKey,
         },
         body: JSON.stringify({
           user_ids:       eligibleUsers.map(u => u.id),

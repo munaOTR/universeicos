@@ -14,7 +14,7 @@ const supabase = getSupabaseClient()
 
 export function AuthAnalyticsTab() {
   const [loading, setLoading] = useState(true)
-  const [stats, setStats] = useState({ login: 0, magic_link_requested: 0, password_reset: 0 })
+  const [stats, setStats] = useState({ login: 0, magic_link_requested: 0, password_reset: 0, logout: 0 })
   const [chartData, setChartData] = useState<{ date: string; count: number }[]>([])
   
   // Verification metrics
@@ -31,11 +31,11 @@ export function AuthAnalyticsTab() {
           supabase.rpc('get_verification_stats'),
           supabase.rpc('get_verification_timeseries', { p_days: 30 })
         ])
-        setStats(s as any)
+        setStats(s)
         setChartData(c)
         if (vS.data) setVStats(vS.data as VerificationStats)
         if (vC.data) {
-          setVChartData((vC.data as any[]).map(d => ({
+          setVChartData(((vC.data || []) as { date: string; verified_count: number; reminder_count: number }[]).map(d => ({
             date: d.date,
             verified: Number(d.verified_count),
             reminders: Number(d.reminder_count)

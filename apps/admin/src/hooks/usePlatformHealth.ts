@@ -37,7 +37,7 @@ export function usePlatformHealth() {
 
         let queueDepth = 0
         if (!queueStats.error && queueStats.data) {
-          const pendingRow = (queueStats.data as any[]).find(r => r.status === 'pending')
+          const pendingRow = ((queueStats.data || []) as { status: string; count: number }[]).find(r => r.status === 'pending')
           if (pendingRow) queueDepth = Number(pendingRow.count)
         }
 
