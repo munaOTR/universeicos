@@ -14,7 +14,7 @@ export interface BetaInvitationEmailProps {
 
 export function BetaInvitationEmail({
   name = 'Student',
-  accessUrl = 'https://universeicos.app/beta',
+  accessUrl = 'https://waitlist.universeicos.app/beta',
   referralCount,
   rank,
   accessCode,

@@ -13,7 +13,7 @@ export interface ResetPasswordEmailProps {
 
 export function ResetPasswordEmail({
   name = 'Student',
-  resetUrl = 'https://universeicos.app/auth/reset',
+  resetUrl = 'https://waitlist.universeicos.app/auth/reset',
   expiresInMinutes = 60,
   ipAddress,
 }: ResetPasswordEmailProps) {

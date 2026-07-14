@@ -10,7 +10,7 @@ export interface AccountActivatedEmailProps {
 
 export function AccountActivatedEmail({
   name = 'Student',
-  dashboardUrl = 'https://universeicos.app/dashboard',
+  dashboardUrl = 'https://waitlist.universeicos.app/dashboard',
 }: AccountActivatedEmailProps) {
   return (
     <UniverseLayout preview="Your Universe account has been activated! Welcome aboard." unsubscribeUrl={null}>

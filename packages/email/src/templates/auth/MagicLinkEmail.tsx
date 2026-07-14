@@ -12,7 +12,7 @@ export interface MagicLinkEmailProps {
 
 export function MagicLinkEmail({
   name = 'Student',
-  magicUrl = 'https://universeicos.app/auth/magic',
+  magicUrl = 'https://waitlist.universeicos.app/auth/magic',
   expiresInMinutes = 15,
 }: MagicLinkEmailProps) {
   return (

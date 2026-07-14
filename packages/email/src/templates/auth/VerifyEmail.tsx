@@ -12,7 +12,7 @@ export interface VerifyEmailProps {
 
 export function VerifyEmail({
   name = 'Student',
-  verifyUrl = 'https://universeicos.app/auth/verify',
+  verifyUrl = 'https://waitlist.universeicos.app/auth/verify',
   expiresInHours = 24,
 }: VerifyEmailProps) {
   return (

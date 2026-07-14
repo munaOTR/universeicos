@@ -11,7 +11,7 @@ export interface LaunchAnnouncementEmailProps {
 
 export function LaunchAnnouncementEmail({
   recipientName,
-  launchUrl = 'https://universeicos.app',
+  launchUrl = 'https://waitlist.universeicos.app',
   launchDate,
 }: LaunchAnnouncementEmailProps) {
   return (

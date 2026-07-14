@@ -7,7 +7,7 @@
 
 export const APP_NAME = 'Universe'
 export const APP_TAGLINE = 'The operating system for Nigerian university students.'
-export const APP_URL = 'https://universeicos.app'
+export const APP_URL = 'https://waitlist.universeicos.app'
 export const APP_SUPPORT_EMAIL = 'hello@universeicos.app'
 
 // ── Routes ───────────────────────────────────────────────────────────────────

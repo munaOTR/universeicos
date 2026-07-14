@@ -8,7 +8,7 @@ export function EmailHeader() {
       <Row>
         <Column>
           <Link
-            href="https://universeicos.app"
+            href="https://waitlist.universeicos.app"
             style={{ textDecoration: 'none' }}
           >
             {/* Logo wordmark rendered in text for maximum email client compatibility */}

@@ -19,7 +19,7 @@ export function EmailFooter({ unsubscribeUrl, campaignTitle }: EmailFooterProps)
               {['Twitter', 'LinkedIn', 'Instagram'].map(platform => (
                 <Link
                   key={platform}
-                  href={`https://universeicos.app`}
+                  href={`https://waitlist.universeicos.app`}
                   style={{
                     color:          BRAND.textLight,
                     fontSize:       '12px',
@@ -66,10 +66,10 @@ export function EmailFooter({ unsubscribeUrl, campaignTitle }: EmailFooterProps)
           {/* Legal links */}
           <Row style={{ marginBottom: '8px' }}>
             <Column style={{ textAlign: 'center' }}>
-              <Link href="https://universeicos.app/privacy" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
+              <Link href="https://waitlist.universeicos.app/privacy" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
                 Privacy Policy
               </Link>
-              <Link href="https://universeicos.app/terms" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
+              <Link href="https://waitlist.universeicos.app/terms" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
                 Terms of Service
               </Link>
               {unsubscribeUrl && (

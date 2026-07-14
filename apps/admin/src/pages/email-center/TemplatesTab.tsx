@@ -87,11 +87,11 @@ export function TemplatesTab() {
         // Create dummy data for preview based on typical variables
         const dummyProps = {
           name: 'Tobi',
-          actionUrl: 'https://universeicos.app/verify',
-          magicLinkUrl: 'https://universeicos.app/login?token=abc',
-          referralUrl: 'https://universeicos.app/join?ref=tobi123',
-          invitationUrl: 'https://universeicos.app/invite?code=123',
-          surveyUrl: 'https://universeicos.app/survey/123',
+          actionUrl: 'https://waitlist.universeicos.app/verify',
+          magicLinkUrl: 'https://waitlist.universeicos.app/login?token=abc',
+          referralUrl: 'https://waitlist.universeicos.app/join?ref=tobi123',
+          invitationUrl: 'https://waitlist.universeicos.app/invite?code=123',
+          surveyUrl: 'https://waitlist.universeicos.app/survey/123',
           platformName: 'Universe',
           milestoneName: 'Campus Ambassador',
           referralsCount: 5,

@@ -28,7 +28,7 @@ export function ProductPreviewSection() {
                 <div className="h-3 w-3 rounded-full bg-green-500/80" />
               </div>
               <div className="mx-auto flex h-6 w-64 items-center justify-center rounded-md bg-zinc-800/50 text-[10px] text-zinc-500 font-mono">
-                app.universeicos.app
+                waitlist.universeicos.app
               </div>
             </div>
 

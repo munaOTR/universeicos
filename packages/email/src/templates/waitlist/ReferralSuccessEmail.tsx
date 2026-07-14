@@ -18,7 +18,7 @@ export function ReferralSuccessEmail({
   pointsEarned = 100,
   totalPoints = 100,
   newPosition,
-  leaderboardUrl = 'https://universeicos.app/dashboard/leaderboard',
+  leaderboardUrl = 'https://waitlist.universeicos.app/dashboard/leaderboard',
 }: ReferralSuccessEmailProps) {
   return (
     <UniverseLayout preview={`You earned ${pointsEarned} points from a new referral! 🎉`}>

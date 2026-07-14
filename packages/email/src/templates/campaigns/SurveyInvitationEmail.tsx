@@ -18,7 +18,7 @@ export function SurveyInvitationEmail({
   surveyTitle = 'Universe Student Survey',
   surveyDescription,
   pointsReward,
-  surveyUrl = 'https://universeicos.app/dashboard/surveys',
+  surveyUrl = 'https://waitlist.universeicos.app/dashboard/surveys',
   expiresAt,
 }: SurveyInvitationEmailProps) {
   return (
