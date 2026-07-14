@@ -120,7 +120,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-zinc-900 truncate">
-                {user?.email || 'admin@rutherkingconsult.co.uk'}
+                {user?.email || 'admin@universeicos.app'}
               </p>
               <p className="text-xs text-zinc-500 capitalize">{profile?.role?.replace('_', ' ') || 'Admin'}</p>
             </div>
@@ -134,3 +134,4 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     </aside>
   )
 }
+

@@ -228,7 +228,7 @@ When "Marketplace" is added:
 |  [ New Survey Available! ]    |
 |                               |
 |  🚀 Quick Share               |
-|  [ rutherkingconsult.co.uk/ref/tobi ]     |
+|  [ universeicos.app/ref/tobi ]     |
 |  [    COPY / SHARE URL  ]     |
 |                               |
 ---------------------------------
@@ -254,7 +254,7 @@ When "Marketplace" is added:
 |           |  [ New Survey Available! Click here ]     |
 |           |                                           |
 |           |  🚀 Quick Share                           |
-|           |  [ rutherkingconsult.co.uk/ref/tobi123 ] [COPY]       |
+|           |  [ universeicos.app/ref/tobi123 ] [COPY]       |
 ---------------------------------------------------------
 ```
 
@@ -298,3 +298,4 @@ When "Marketplace" is added:
 ## 23. Future UX Strategy
 
 By establishing a robust sidebar/bottom-tab navigation model now, we create a "shell" that can accept any future module. The Dashboard acts as an aggregator (an OS desktop), surfacing the most important information from the sub-modules (Marketplace alerts, Study Hub reminders) into a unified feed, ensuring the platform remains cohesive no matter how large it grows.
+

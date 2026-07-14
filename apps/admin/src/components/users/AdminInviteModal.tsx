@@ -76,7 +76,7 @@ export function AdminInviteModal({ onClose, onSuccess }: AdminInviteModalProps) 
             <Input 
               id="email"
               type="email" 
-              placeholder="colleague@rutherkingconsult.co.uk" 
+              placeholder="colleague@universeicos.app" 
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -130,3 +130,4 @@ export function AdminInviteModal({ onClose, onSuccess }: AdminInviteModalProps) 
     </div>
   )
 }
+

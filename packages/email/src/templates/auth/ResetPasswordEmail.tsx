@@ -13,7 +13,7 @@ export interface ResetPasswordEmailProps {
 
 export function ResetPasswordEmail({
   name = 'Student',
-  resetUrl = 'https://rutherkingconsult.co.uk/auth/reset',
+  resetUrl = 'https://universeicos.app/auth/reset',
   expiresInMinutes = 60,
   ipAddress,
 }: ResetPasswordEmailProps) {
@@ -37,7 +37,7 @@ export function ResetPasswordEmail({
       </EmailButton>
 
       <EmailCallout variant="error" title="Didn't request this?">
-        If you didn't request a password reset, please ignore this email. Your password will remain unchanged. If you're concerned about your account security, contact us at hello@rutherkingconsult.co.uk.
+        If you didn't request a password reset, please ignore this email. Your password will remain unchanged. If you're concerned about your account security, contact us at hello@universeicos.app.
       </EmailCallout>
 
       {ipAddress && (

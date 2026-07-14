@@ -62,5 +62,5 @@ export * from './templates/campaigns/SurveyInvitationEmail'
 
 // ── Email config ──────────────────────────────────────────────────────────────
 
-export const EMAIL_FROM = 'Universe <hello@rutherkingconsult.co.uk>'
-export const EMAIL_REPLY_TO = 'hello@rutherkingconsult.co.uk'
+export const EMAIL_FROM = 'Universe <hello@universeicos.app>'
+export const EMAIL_REPLY_TO = 'hello@universeicos.app'

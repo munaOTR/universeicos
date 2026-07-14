@@ -49,7 +49,7 @@ export interface UniverseLayoutProps {
 export function UniverseLayout({
   preview,
   children,
-  unsubscribeUrl = 'https://rutherkingconsult.co.uk/unsubscribe',
+  unsubscribeUrl = 'https://universeicos.app/unsubscribe',
   campaignTitle,
 }: UniverseLayoutProps) {
   return (

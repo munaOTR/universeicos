@@ -52,8 +52,8 @@ export function FooterSection() {
           <div>
             <h4 className="text-white font-bold mb-4">Contact</h4>
             <ul className="space-y-3 text-sm text-zinc-400">
-              <li><a href="mailto:hello@rutherkingconsult.co.uk" className="hover:text-white transition-colors">hello@rutherkingconsult.co.uk</a></li>
-              <li><a href="mailto:support@rutherkingconsult.co.uk" className="hover:text-white transition-colors">support@rutherkingconsult.co.uk</a></li>
+              <li><a href="mailto:hello@universeicos.app" className="hover:text-white transition-colors">hello@universeicos.app</a></li>
+              <li><a href="mailto:support@universeicos.app" className="hover:text-white transition-colors">support@universeicos.app</a></li>
             </ul>
           </div>
         </div>
@@ -66,3 +66,4 @@ export function FooterSection() {
     </footer>
   )
 }
+

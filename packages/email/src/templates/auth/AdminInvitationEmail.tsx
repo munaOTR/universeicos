@@ -16,7 +16,7 @@ export function AdminInvitationEmail({
   inviteeName = 'Admin',
   inviterName = 'The Universe Team',
   role = 'Admin',
-  setPasswordUrl = 'https://admin.rutherkingconsult.co.uk/auth/set-password',
+  setPasswordUrl = 'https://admin.universeicos.app/auth/set-password',
   expiresInHours = 48,
 }: AdminInvitationEmailProps) {
   return (

@@ -13,11 +13,11 @@ export interface WelcomeEmailProps {
 
 export function WelcomeEmail({
   name = 'Student',
-  dashboardUrl = 'https://rutherkingconsult.co.uk/dashboard',
+  dashboardUrl = 'https://universeicos.app/dashboard',
   referralCode,
   referralUrl,
 }: WelcomeEmailProps) {
-  const refLink = referralUrl ?? (referralCode ? `https://rutherkingconsult.co.uk?ref=${referralCode}` : null)
+  const refLink = referralUrl ?? (referralCode ? `https://universeicos.app?ref=${referralCode}` : null)
 
   return (
     <UniverseLayout preview={`Welcome to Universe, ${name}! Your journey starts now.`} unsubscribeUrl={null}>

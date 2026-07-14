@@ -14,7 +14,7 @@ export function AccountSuspendedEmail({
   name = 'Student',
   reason,
   appealUrl,
-  supportEmail = 'hello@rutherkingconsult.co.uk',
+  supportEmail = 'hello@universeicos.app',
 }: AccountSuspendedEmailProps) {
   return (
     <UniverseLayout preview="Important notice regarding your Universe account." unsubscribeUrl={null}>

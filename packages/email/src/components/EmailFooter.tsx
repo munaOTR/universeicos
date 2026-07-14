@@ -19,7 +19,7 @@ export function EmailFooter({ unsubscribeUrl, campaignTitle }: EmailFooterProps)
               {['Twitter', 'LinkedIn', 'Instagram'].map(platform => (
                 <Link
                   key={platform}
-                  href={`https://rutherkingconsult.co.uk`}
+                  href={`https://universeicos.app`}
                   style={{
                     color:          BRAND.textLight,
                     fontSize:       '12px',
@@ -58,18 +58,18 @@ export function EmailFooter({ unsubscribeUrl, campaignTitle }: EmailFooterProps)
             }}
           >
             Lagos, Nigeria &nbsp;·&nbsp;
-            <Link href="mailto:hello@rutherkingconsult.co.uk" style={{ color: BRAND.textLight }}>
-              hello@rutherkingconsult.co.uk
+            <Link href="mailto:hello@universeicos.app" style={{ color: BRAND.textLight }}>
+              hello@universeicos.app
             </Link>
           </Text>
 
           {/* Legal links */}
           <Row style={{ marginBottom: '8px' }}>
             <Column style={{ textAlign: 'center' }}>
-              <Link href="https://rutherkingconsult.co.uk/privacy" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
+              <Link href="https://universeicos.app/privacy" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
                 Privacy Policy
               </Link>
-              <Link href="https://rutherkingconsult.co.uk/terms" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
+              <Link href="https://universeicos.app/terms" style={{ color: BRAND.textLight, fontSize: '11px', marginRight: '12px' }}>
                 Terms of Service
               </Link>
               {unsubscribeUrl && (

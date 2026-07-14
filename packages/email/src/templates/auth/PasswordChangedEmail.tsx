@@ -12,7 +12,7 @@ export interface PasswordChangedEmailProps {
 export function PasswordChangedEmail({
   name = 'Student',
   changedAt,
-  supportUrl = 'mailto:hello@rutherkingconsult.co.uk',
+  supportUrl = 'mailto:hello@universeicos.app',
 }: PasswordChangedEmailProps) {
   const timeStr = changedAt
     ? new Date(changedAt).toLocaleString('en-NG', { dateStyle: 'long', timeStyle: 'short' })

@@ -19,7 +19,7 @@ export function ReferralMilestoneEmail({
   totalPoints = 1000,
   rank,
   reward,
-  leaderboardUrl = 'https://rutherkingconsult.co.uk/dashboard/leaderboard',
+  leaderboardUrl = 'https://universeicos.app/dashboard/leaderboard',
 }: ReferralMilestoneEmailProps) {
   return (
     <UniverseLayout preview={`You've hit ${milestone} referrals! 🏆 Keep climbing!`}>

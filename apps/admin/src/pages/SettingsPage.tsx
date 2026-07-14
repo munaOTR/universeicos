@@ -13,7 +13,7 @@ interface Setting {
 const DEFAULT_SETTINGS: Record<string, Setting[]> = {
   'General': [
     { key: 'app_name', value: 'Universe', type: 'string' },
-    { key: 'support_email', value: 'hello@rutherkingconsult.co.uk', type: 'string' },
+    { key: 'support_email', value: 'hello@universeicos.app', type: 'string' },
     { key: 'maintenance_mode', value: false, type: 'boolean' },
   ],
   'Referral Engine': [
@@ -28,7 +28,7 @@ const DEFAULT_SETTINGS: Record<string, Setting[]> = {
   ],
   'Email': [
     { key: 'email_sender_name', value: 'Universe Team', type: 'string' },
-    { key: 'email_sender_address', value: 'noreply@rutherkingconsult.co.uk', type: 'string' },
+    { key: 'email_sender_address', value: 'noreply@universeicos.app', type: 'string' },
     { key: 'email_notifications_enabled', value: true, type: 'boolean' },
   ],
   'Security': [
@@ -406,3 +406,4 @@ export function SettingsPage() {
     </div>
   )
 }
+

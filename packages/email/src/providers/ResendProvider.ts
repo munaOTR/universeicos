@@ -18,7 +18,7 @@ export class ResendProvider implements CommunicationProvider {
   private readonly client: Resend
   private readonly fromDefault: string
 
-  constructor(apiKey: string, fromDefault = 'Universe <hello@rutherkingconsult.co.uk>') {
+  constructor(apiKey: string, fromDefault = 'Universe <hello@universeicos.app>') {
     if (!apiKey) throw new Error('ResendProvider: RESEND_API_KEY is required')
     this.client = new Resend(apiKey)
     this.fromDefault = fromDefault

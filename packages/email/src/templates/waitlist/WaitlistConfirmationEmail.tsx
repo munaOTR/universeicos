@@ -16,9 +16,9 @@ export function WaitlistConfirmationEmail({
   position,
   referralCode,
   referralUrl,
-  dashboardUrl = 'https://rutherkingconsult.co.uk/dashboard',
+  dashboardUrl = 'https://universeicos.app/dashboard',
 }: WaitlistConfirmationEmailProps) {
-  const refLink = referralUrl ?? (referralCode ? `https://rutherkingconsult.co.uk?ref=${referralCode}` : null)
+  const refLink = referralUrl ?? (referralCode ? `https://universeicos.app?ref=${referralCode}` : null)
 
   return (
     <UniverseLayout preview={`You're on the Universe waitlist${position ? ` — #${position}` : ''}! Share your link to move up.`}>

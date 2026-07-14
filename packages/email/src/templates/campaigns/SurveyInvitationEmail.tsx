@@ -18,7 +18,7 @@ export function SurveyInvitationEmail({
   surveyTitle = 'Universe Student Survey',
   surveyDescription,
   pointsReward,
-  surveyUrl = 'https://rutherkingconsult.co.uk/dashboard/surveys',
+  surveyUrl = 'https://universeicos.app/dashboard/surveys',
   expiresAt,
 }: SurveyInvitationEmailProps) {
   return (

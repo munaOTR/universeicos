@@ -19,7 +19,7 @@ const benefits = [
 
 export function VerificationReminderEmail({
   name = 'Student',
-  verifyUrl = 'https://rutherkingconsult.co.uk/auth/verify',
+  verifyUrl = 'https://universeicos.app/auth/verify',
   reminderNumber = 1,
   expiresInHours = 24,
 }: VerificationReminderEmailProps) {

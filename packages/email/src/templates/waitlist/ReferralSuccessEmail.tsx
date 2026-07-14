@@ -18,7 +18,7 @@ export function ReferralSuccessEmail({
   pointsEarned = 100,
   totalPoints = 100,
   newPosition,
-  leaderboardUrl = 'https://rutherkingconsult.co.uk/dashboard/leaderboard',
+  leaderboardUrl = 'https://universeicos.app/dashboard/leaderboard',
 }: ReferralSuccessEmailProps) {
   return (
     <UniverseLayout preview={`You earned ${pointsEarned} points from a new referral! 🎉`}>

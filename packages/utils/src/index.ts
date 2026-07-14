@@ -79,7 +79,7 @@ export function getInitials(name: string): string {
 /**
  * Builds a shareable referral URL.
  */
-export function buildReferralUrl(referralCode: string, baseUrl = 'https://rutherkingconsult.co.uk'): string {
+export function buildReferralUrl(referralCode: string, baseUrl = 'https://universeicos.app'): string {
   return `${baseUrl}/waitlist?ref=${referralCode}`
 }
 

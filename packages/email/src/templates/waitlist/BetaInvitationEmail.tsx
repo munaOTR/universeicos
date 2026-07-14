@@ -14,7 +14,7 @@ export interface BetaInvitationEmailProps {
 
 export function BetaInvitationEmail({
   name = 'Student',
-  accessUrl = 'https://rutherkingconsult.co.uk/beta',
+  accessUrl = 'https://universeicos.app/beta',
   referralCount,
   rank,
   accessCode,

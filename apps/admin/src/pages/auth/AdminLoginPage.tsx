@@ -51,7 +51,7 @@ export function AdminLoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@rutherkingconsult.co.uk"
+              placeholder="admin@universeicos.app"
               required
             />
           </div>
@@ -76,4 +76,5 @@ export function AdminLoginPage() {
     </div>
   )
 }
+
 

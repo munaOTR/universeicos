@@ -87,11 +87,11 @@ export function TemplatesTab() {
         // Create dummy data for preview based on typical variables
         const dummyProps = {
           name: 'Tobi',
-          actionUrl: 'https://rutherkingconsult.co.uk/verify',
-          magicLinkUrl: 'https://rutherkingconsult.co.uk/login?token=abc',
-          referralUrl: 'https://rutherkingconsult.co.uk/join?ref=tobi123',
-          invitationUrl: 'https://rutherkingconsult.co.uk/invite?code=123',
-          surveyUrl: 'https://rutherkingconsult.co.uk/survey/123',
+          actionUrl: 'https://universeicos.app/verify',
+          magicLinkUrl: 'https://universeicos.app/login?token=abc',
+          referralUrl: 'https://universeicos.app/join?ref=tobi123',
+          invitationUrl: 'https://universeicos.app/invite?code=123',
+          surveyUrl: 'https://universeicos.app/survey/123',
           platformName: 'Universe',
           milestoneName: 'Campus Ambassador',
           referralsCount: 5,
@@ -221,3 +221,4 @@ export function TemplatesTab() {
     </div>
   )
 }
+

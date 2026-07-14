@@ -58,7 +58,7 @@ URL: https://YOUR_PROJECT_REF.supabase.co/functions/v1/comms-delivery-webhook
 Events: email.sent, email.delivered, email.bounced, email.complained
 Copy the Webhook Secret into Supabase Edge Function secrets as RESEND_WEBHOOK_SECRET
 ✅ Phase 6: Domain Authentication Setup Guide
-Required DNS Records for rutherkingconsult.co.uk
+Required DNS Records for universeicos.app
 Set these in your DNS provider (e.g., Cloudflare, Namecheap, etc.):
 
 SPF Record
@@ -69,10 +69,10 @@ Value: v=spf1 include:_spf.resend.com -all
 TTL:   3600
 IMPORTANT
 
-The -all directive means only Resend's servers are authorized to send email from rutherkingconsult.co.uk. Use ~all (soft fail) during testing.
+The -all directive means only Resend's servers are authorized to send email from universeicos.app. Use ~all (soft fail) during testing.
 
 DKIM Record
-Resend generates a DKIM key pair per domain. After adding rutherkingconsult.co.uk in your Resend dashboard:
+Resend generates a DKIM key pair per domain. After adding universeicos.app in your Resend dashboard:
 
 
 Type:  TXT
@@ -83,7 +83,7 @@ DMARC Record
 
 Type:  TXT
 Name:  _dmarc
-Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@rutherkingconsult.co.uk; ruf=mailto:dmarc@rutherkingconsult.co.uk; fo=1; adkim=s; aspf=s; pct=100
+Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@universeicos.app; ruf=mailto:dmarc@universeicos.app; fo=1; adkim=s; aspf=s; pct=100
 TTL:   3600
 TIP
 
@@ -93,7 +93,7 @@ Verification Steps
 Add domain in Resend Dashboard → Domains.
 Add the three DNS records above.
 Click "Verify" in Resend — DNS propagation can take up to 48 hours.
-Run: dig TXT resend._domainkey.rutherkingconsult.co.uk to confirm DKIM is live.
+Run: dig TXT resend._domainkey.universeicos.app to confirm DKIM is live.
 Use mail-tester.com to verify deliverability score.
 ✅ Phase 7: Authentication Emails via Supabase Hooks
 File: supabase/functions/comms-auth-hook/index.ts

@@ -61,7 +61,7 @@ export function getProvider(): CommunicationProvider {
   _instance = createProvider({
     provider:     (env['COMMS_PROVIDER'] ?? 'resend') as ProviderName,
     resendApiKey: env['RESEND_API_KEY'] ?? env['VITE_RESEND_API_KEY'],
-    from:         env['COMMS_FROM_EMAIL'] ?? 'Universe <hello@rutherkingconsult.co.uk>',
+    from:         env['COMMS_FROM_EMAIL'] ?? 'Universe <hello@universeicos.app>',
   })
 
   return _instance
