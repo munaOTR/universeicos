@@ -1,0 +1,45 @@
+{
+    "name": "admin",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "oxlint",
+        "preview": "vite preview",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.110.0",
+        "@tailwindcss/vite": "^4.3.2",
+        "@tanstack/react-query": "^5.101.2",
+        "@tanstack/react-table": "^8.21.3",
+        "@universe/auth": "workspace:*",
+        "@universe/constants": "workspace:*",
+        "@universe/database": "workspace:*",
+        "@universe/email": "workspace:*",
+        "@universe/hooks": "workspace:*",
+        "@universe/types": "workspace:*",
+        "@universe/ui": "workspace:*",
+        "@universe/utils": "workspace:*",
+        "hugeicons-react": "^0.4.0",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7",
+        "react-error-boundary": "^6.1.2",
+        "react-hook-form": "^7.80.0",
+        "react-router-dom": "^7.18.1",
+        "recharts": "^3.9.2",
+        "sonner": "^2.0.7",
+        "tailwindcss": "^4.3.2",
+        "zod": "^4.4.3"
+    },
+    "devDependencies": {
+        "@types/node": "^26.1.0",
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^6.0.3",
+        "oxlint": "^1.71.0",
+        "vite": "^8.1.1"
+    }
+}

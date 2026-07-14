@@ -1,0 +1,45 @@
+{
+    "name": "universe-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "engines": {
+        "node": ">=20.0.0",
+        "pnpm": ">=9.0.0"
+    },
+    "scripts": {
+        "dev": "pnpm --parallel -r run dev",
+        "build": "pnpm --parallel -r run build",
+        "lint": "pnpm --parallel -r run lint",
+        "clean": "pnpm --parallel -r run clean",
+        "prepare": "husky",
+        "typecheck": "pnpm --parallel -r run typecheck",
+        "db:types": "supabase gen types typescript --project-id \"$SUPABASE_PROJECT_ID\" > packages/types/src/database.types.ts",
+        "db:reset": "supabase db reset",
+        "db:seed": "supabase db reset --db-url \"$SUPABASE_DB_URL\"",
+        "test": "vitest run --config vitest.config.ts",
+        "test:watch": "vitest --config vitest.config.ts",
+        "test:coverage": "vitest run --config vitest.config.ts --coverage",
+        "test:e2e": "playwright test --config e2e/playwright.config.ts"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@playwright/test": "^1.61.1",
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.2",
+        "eslint": "^10.6.0",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "eslint-plugin-react-refresh": "^0.5.3",
+        "husky": "^9.1.7",
+        "jsdom": "^29.1.1",
+        "lint-staged": "^17.0.8",
+        "prettier": "^3.9.4",
+        "supabase": "^2.109.0",
+        "typescript-eslint": "^8.62.1",
+        "vitest": "^4.1.9"
+    },
+    "dependencies": {
+        "@hugeicons/core-free-icons": "^4.2.2",
+        "@hugeicons/react": "^1.1.9",
+        "tslib": "^2.8.1"
+    }
+}

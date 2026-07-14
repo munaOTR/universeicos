@@ -1,0 +1,12 @@
+{
+    "compilerOptions":  {
+                            "paths":  {
+                                          "@/*":  [
+                                                      "./src/*"
+                                                  ]
+                                      },
+                            "baseUrl":  "."
+                        },
+    "include": ["src", ".vscode/ts-hover-prettify.d.ts"],
+    "extends":  "../../packages/config/tsconfig.base.json"
+}

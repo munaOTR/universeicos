@@ -1,0 +1,9 @@
+{
+  "name": "@universe/config",
+  "version": "1.0.0",
+  "private": true,
+  "tsconfig": "./tsconfig.base.json",
+  "scripts": {
+    "typecheck": "echo 'No typecheck for config'"
+  }
+}

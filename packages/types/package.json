@@ -1,0 +1,10 @@
+{
+    "private":  true,
+    "name":  "@universe/types",
+    "version":  "1.0.0",
+    "main":  "src/index.ts",
+    "scripts": {
+        "generate": "pnpm -w run db:types",
+        "typecheck": "tsc --noEmit"
+    }
+}

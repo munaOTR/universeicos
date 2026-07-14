@@ -1,0 +1,16 @@
+{
+    "private": true,
+    "name": "@universe/hooks",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "scripts": {},
+    "dependencies": {
+        "@supabase/supabase-js": "^2.110.0",
+        "@tanstack/react-query": "^5.101.2",
+        "@universe/database": "workspace:*",
+        "react": "^19.2.7"
+    },
+    "devDependencies": {
+        "@types/react": "^19.2.17"
+    }
+}

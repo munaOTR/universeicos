@@ -1,0 +1,11 @@
+{
+    "private": true,
+    "name": "@universe/validation",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "dependencies": {
+        "@universe/constants": "workspace:*",
+        "zod": "^4.4.3"
+    },
+    "scripts": {}
+}

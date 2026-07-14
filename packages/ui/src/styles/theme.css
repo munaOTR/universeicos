@@ -1,0 +1,45 @@
+/**
+ * Universe Design System - Pure CSS Custom Properties
+ * This file contains ONLY CSS variables. No Tailwind directives.
+ * Tailwind is initialized in each app's own index.css.
+ */
+
+:root {
+  /* Typography */
+  --font-sans: "Inter", "system-ui", "sans-serif";
+
+  /* Primary (Green) Palette */
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
+  --color-primary-950: #022c22;
+
+  /* Semantic Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #e11d48;
+  --color-info: #3b82f6;
+
+  /* Semantic Surface / Text Aliases (Light Mode) */
+  --color-background: #f9fafb; /* zinc-50 */
+  --color-surface: #ffffff;    /* white */
+  --color-border: #e4e4e7;     /* zinc-200 */
+  --color-text: #18181b;       /* zinc-900 */
+  --color-text-muted: #71717a; /* zinc-500 */
+
+  /* Border Radius Scale */
+  --radius-sm: 4px;
+  --radius-md: 8px;   /* Buttons/Inputs */
+  --radius-lg: 12px;  /* Cards */
+  --radius-xl: 16px;  /* Modals */
+
+  /* Shadows */
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}

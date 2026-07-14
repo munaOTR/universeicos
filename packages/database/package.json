@@ -1,0 +1,12 @@
+{
+    "private":  true,
+    "name":  "@universe/database",
+    "version":  "1.0.0",
+    "main":  "src/index.ts",
+    "dependencies":  {
+                         "@supabase/supabase-js":  "^2.110.0"
+                     },
+    "scripts":  {
+
+                }
+}
