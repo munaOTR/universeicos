@@ -11,6 +11,11 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  preview: {
+    port: parseInt(process.env.PORT || '4173'),
+    host: '0.0.0.0',
+    allowedHosts: true,
+  },
   resolve: {
     alias: {
       '@universe/ui': path.resolve(__dirname, '../../packages/ui/src'),
