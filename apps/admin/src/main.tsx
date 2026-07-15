@@ -5,6 +5,8 @@ import { Providers } from './providers'
 import { router } from './router'
 import './index.css'
 
+import { ErrorBoundary } from '@universe/ui'
+
 const rootElement = document.getElementById('root')
 
 if (!rootElement) {
@@ -13,8 +15,10 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <Providers>
-      <RouterProvider router={router} />
-    </Providers>
+    <ErrorBoundary>
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>
+    </ErrorBoundary>
   </StrictMode>,
 )
