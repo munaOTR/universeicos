@@ -8,12 +8,7 @@ import { useState, useEffect } from 'react'
 import { env } from '../../config/env'
 import { getSupabaseClient } from '@universe/database'
 import { Button, Spinner, toast } from '@universe/ui'
-import {
-  Cancel01Icon,
-  Mail01Icon,
-  CheckmarkCircle01Icon,
-  AlertCircleIcon,
-} from 'hugeicons-react'
+import { Cancel01Icon, Mail01Icon, CheckmarkCircle01Icon, AlertCircleIcon } from 'hugeicons-react'
 
 interface EligibleUser {
   id: string
@@ -36,12 +31,12 @@ interface BulkReminderModalProps {
 type Step = 'preview' | 'confirming' | 'sending' | 'done' | 'error'
 
 export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps) {
-  const [step, setStep]                   = useState<Step>('preview')
+  const [step, setStep] = useState<Step>('preview')
   const [eligibleUsers, setEligibleUsers] = useState<EligibleUser[]>([])
-  const [quota, setQuota]                 = useState<QuotaInfo | null>(null)
-  const [loading, setLoading]             = useState(true)
-  const [sentCount, setSentCount]         = useState(0)
-  const [errorMsg, setErrorMsg]           = useState('')
+  const [quota, setQuota] = useState<QuotaInfo | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [sentCount, setSentCount] = useState(0)
+  const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
     const fetchPreview = async () => {
@@ -49,10 +44,15 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
       const supabase = getSupabaseClient()
       const [{ data: users }, { data: quotaData }] = await Promise.all([
         supabase.rpc('get_verification_eligible_users'),
-        supabase.from('provider_quotas').select('daily_limit, daily_used').eq('provider_name', 'resend').single(),
+        supabase
+          .from('provider_quotas')
+          .select('daily_limit, daily_used')
+          .eq('provider_name', 'resend')
+          .single(),
       ])
-      if (users)     setEligibleUsers(users)
-      if (quotaData) setQuota({ ...quotaData, remaining: quotaData.daily_limit - quotaData.daily_used })
+      if (users) setEligibleUsers(users)
+      if (quotaData)
+        setQuota({ ...quotaData, remaining: quotaData.daily_limit - quotaData.daily_used })
       setLoading(false)
     }
     fetchPreview()
@@ -61,20 +61,20 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
   const handleSend = async () => {
     setStep('sending')
     try {
-      const supabase   = getSupabaseClient()
+      const supabase = getSupabaseClient()
       const { data: session } = await supabase.auth.getSession()
       const token = session?.session?.access_token
       if (!token) throw new Error('Not authenticated')
 
       const response = await fetch(`${env.supabaseUrl}/functions/v1/send-verification-reminder`, {
-        method:  'POST',
+        method: 'POST',
         headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${token}`,
-          'apikey':        env.supabaseAnonKey,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          apikey: env.supabaseAnonKey,
         },
         body: JSON.stringify({
-          user_ids:       eligibleUsers.map(u => u.id),
+          user_ids: eligibleUsers.map(u => u.id),
           trigger_source: 'bulk',
         }),
       })
@@ -83,9 +83,17 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
 
       if (!response.ok) throw new Error(result.error ?? 'Unknown error')
 
-      setSentCount(result.sent ?? eligibleUsers.length)
+      const sent = result.sent ?? 0
+
+      if (sent === 0 && result.results?.length > 0) {
+        // All users failed — surface the first reason for debugging
+        const firstError = result.results[0]?.error ?? 'Unknown reason'
+        throw new Error(`No emails sent. First failure reason: ${firstError}`)
+      }
+
+      setSentCount(sent)
       setStep('done')
-      onSuccess(result.sent ?? eligibleUsers.length)
+      onSuccess(sent)
     } catch (e: any) {
       setErrorMsg(e.message)
       setStep('error')
@@ -105,7 +113,6 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
       {/* Modal */}
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl border border-zinc-200 w-full max-w-md">
-
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
             <div className="flex items-center gap-3">
@@ -140,13 +147,17 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
                 <div className="bg-zinc-50 rounded-xl border border-zinc-200 p-4 space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-zinc-500">Eligible recipients</span>
-                    <span className="font-bold text-zinc-900">{eligibleUsers.length.toLocaleString()}</span>
+                    <span className="font-bold text-zinc-900">
+                      {eligibleUsers.length.toLocaleString()}
+                    </span>
                   </div>
                   {quota && (
                     <>
                       <div className="flex justify-between text-sm">
                         <span className="text-zinc-500">Daily quota remaining</span>
-                        <span className={`font-semibold ${quotaWillExceed ? 'text-red-600' : 'text-emerald-600'}`}>
+                        <span
+                          className={`font-semibold ${quotaWillExceed ? 'text-red-600' : 'text-emerald-600'}`}
+                        >
                           {quota.remaining.toLocaleString()} / {quota.daily_limit.toLocaleString()}
                         </span>
                       </div>
@@ -154,7 +165,9 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
                       <div className="w-full bg-zinc-200 rounded-full h-2 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${quotaWillExceed ? 'bg-red-500' : 'bg-emerald-500'}`}
-                          style={{ width: `${Math.min(((quota.daily_used + eligibleUsers.length) / quota.daily_limit) * 100, 100)}%` }}
+                          style={{
+                            width: `${Math.min(((quota.daily_used + eligibleUsers.length) / quota.daily_limit) * 100, 100)}%`,
+                          }}
                         />
                       </div>
                     </>
@@ -165,8 +178,8 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
                   <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-800">
                     <AlertCircleIcon size={16} className="shrink-0 mt-0.5" />
                     <span>
-                      Sending to all eligible users would exceed today&apos;s email quota.
-                      Emails will be queued and processed as quota allows.
+                      Sending to all eligible users would exceed today&apos;s email quota. Emails
+                      will be queued and processed as quota allows.
                     </span>
                   </div>
                 )}
@@ -175,7 +188,9 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
                   <div className="text-center py-4">
                     <CheckmarkCircle01Icon size={32} className="text-emerald-500 mx-auto mb-2" />
                     <p className="text-sm font-medium text-zinc-700">No eligible users</p>
-                    <p className="text-xs text-zinc-500 mt-1">All users are either verified or were recently reminded.</p>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      All users are either verified or were recently reminded.
+                    </p>
                   </div>
                 ) : (
                   <p className="text-sm text-zinc-600">
@@ -230,7 +245,8 @@ export function BulkReminderModal({ onClose, onSuccess }: BulkReminderModalProps
                   onClick={handleSend}
                   disabled={eligibleUsers.length === 0}
                 >
-                  Send {eligibleUsers.length > 0 ? `${eligibleUsers.length.toLocaleString()} ` : ''}Reminders
+                  Send {eligibleUsers.length > 0 ? `${eligibleUsers.length.toLocaleString()} ` : ''}
+                  Reminders
                 </Button>
               </>
             )}
