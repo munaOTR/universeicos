@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "https://deno.land/std@0.177.0/": "https://deno.land/std@0.177.0/",
+    "std/": "https://deno.land/std@0.177.0/",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.45.6",
+    "@react-email/components": "npm:@react-email/components@0.0.12",
+    "@react-email/render": "npm:@react-email/render@0.0.12",
+    "react": "npm:react@18.2.0",
+    "react-dom": "npm:react-dom@18.2.0"
+  }
+}

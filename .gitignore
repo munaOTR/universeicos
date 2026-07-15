@@ -110,6 +110,11 @@ desktop.ini
 # Supabase — local DB config, migrations & secrets
 # ----------------------------------------------------------
 supabase/
+# Track edge functions source code (but not local/secrets)
+!supabase/functions/
+!supabase/functions/**
+!supabase/migrations/
+!supabase/migrations/**
 
 # ----------------------------------------------------------
 # Miscellaneous
