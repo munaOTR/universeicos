@@ -11,13 +11,31 @@ export function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        const hash = window.location.hash
-        const isRecoveryOrInvite = hash.includes('type=recovery') || hash.includes('type=invite')
-
         const supabase = getSupabaseClient()
-        // Supabase js client automatically handles the hash in the URL and establishes the session
-        const { error: sessionError } = await supabase.auth.getSession()
-        
+        const searchParams = new URLSearchParams(window.location.search)
+        const tokenHash = searchParams.get('token_hash')
+        const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup'
+
+        let sessionError: any
+        let isRecoveryOrInvite: boolean
+
+        if (tokenHash && type) {
+          // If we received a token_hash, verify it directly
+          const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+          sessionError = error
+          isRecoveryOrInvite = type === 'recovery' || type === 'invite'
+        } else {
+          // Otherwise rely on default hash/code handling
+          const hash = window.location.hash
+          isRecoveryOrInvite =
+            hash.includes('type=recovery') ||
+            hash.includes('type=invite') ||
+            type === 'recovery' ||
+            type === 'invite'
+          const { error } = await supabase.auth.getSession()
+          sessionError = error
+        }
+
         if (sessionError) {
           throw sessionError
         }
@@ -30,7 +48,6 @@ export function AuthCallback() {
             navigate(ROUTES.ADMIN, { replace: true })
           }
         }, 1000)
-
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Authentication failed during callback')
       }
