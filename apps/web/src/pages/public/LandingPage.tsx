@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { HeroSection } from './landing/HeroSection'
 import { SocialProofSection } from './landing/SocialProofSection'
 import { ProblemSection } from './landing/ProblemSection'
@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@universe/constants'
 import { useInteractionState } from '../../hooks/useInteractionState'
 import { WelcomeBackModal } from '../../components/WelcomeBackModal'
-import { useState } from 'react'
+
 export function LandingPage() {
   const { session, isLoading } = useAuth()
   const navigate = useNavigate()

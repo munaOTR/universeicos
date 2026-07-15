@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { Modal, Button, Input, toast } from '@universe/ui'
 import { getSupabaseClient } from '@universe/database'
 import { useInteractionState } from '../hooks/useInteractionState'
-import { ROUTES } from '@universe/constants'
-import { useNavigate } from 'react-router-dom'
 
 interface WelcomeBackModalProps {
   isOpen: boolean
@@ -15,7 +13,6 @@ export function WelcomeBackModal({ isOpen, onClose }: WelcomeBackModalProps) {
   const [email, setEmail] = useState(rememberedEmail || '')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [useDifferent, setUseDifferent] = useState(!rememberedEmail)
-  const navigate = useNavigate()
 
   const handleContinue = async (e: React.FormEvent) => {
     e.preventDefault()

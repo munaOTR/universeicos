@@ -125,9 +125,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               <p className="text-xs text-zinc-500 capitalize">{profile?.role?.replace('_', ' ') || 'Admin'}</p>
             </div>
           </div>
-          </div>
         ) : (
-          <div className="mx-auto h-9 w-9 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-700 font-bold text-xs uppercase mb-4">
+          <div className="mx-auto h-9 w-9 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-700 font-bold text-xs uppercase">
             {user?.email?.charAt(0) || 'A'}
           </div>
         )}
