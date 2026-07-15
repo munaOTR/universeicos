@@ -10,22 +10,22 @@
  *   { user_ids: string[], triggered_by?: string, trigger_source?: string }
  */
 
-import { serve } from "std/http/server.ts"
-import { createClient } from "@supabase/supabase-js"
+import { serve } from 'std/http/server.ts'
+import { createClient } from '@supabase/supabase-js'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+serve(async req => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const supabaseUrl  = Deno.env.get('SUPABASE_URL')!
-    const serviceKey   = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
     // Admin client — full auth.admin access
     const supabase = createClient(supabaseUrl, serviceKey)
@@ -43,9 +43,12 @@ serve(async (req) => {
 
     // Verify caller identity
     const callerClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
-      global: { headers: { Authorization: authHeader } }
+      global: { headers: { Authorization: authHeader } },
     })
-    const { data: { user: callerUser }, error: callerErr } = await callerClient.auth.getUser()
+    const {
+      data: { user: callerUser },
+      error: callerErr,
+    } = await callerClient.auth.getUser()
 
     if (callerErr || !callerUser) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -71,14 +74,10 @@ serve(async (req) => {
     // ── Parse request body ───────────────────────────────────────────────────
     const body = await req.json()
     const trigger_source: string = body.trigger_source ?? 'manual'
-    const triggered_by: string   = body.triggered_by ?? callerUser.id
+    const triggered_by: string = body.triggered_by ?? callerUser.id
 
     // Normalize to array of user_ids
-    const userIds: string[] = body.user_ids
-      ? body.user_ids
-      : body.user_id
-        ? [body.user_id]
-        : []
+    const userIds: string[] = body.user_ids ? body.user_ids : body.user_id ? [body.user_id] : []
 
     if (userIds.length === 0) {
       return new Response(JSON.stringify({ error: 'No user_ids provided' }), {
@@ -122,7 +121,9 @@ serve(async (req) => {
         }
 
         // Verify the user is still unconfirmed directly from auth (single source of truth)
-        const { data: { user: authUser } } = await supabase.auth.admin.getUserById(userId)
+        const {
+          data: { user: authUser },
+        } = await supabase.auth.admin.getUserById(userId)
         if (authUser?.email_confirmed_at) {
           results.push({ user_id: userId, success: false, error: 'User already verified' })
           continue
@@ -135,7 +136,11 @@ serve(async (req) => {
         })
 
         if (linkErr || !linkData?.properties?.hashed_token) {
-          results.push({ user_id: userId, success: false, error: linkErr?.message ?? 'Failed to generate link' })
+          results.push({
+            user_id: userId,
+            success: false,
+            error: linkErr?.message ?? 'Failed to generate link',
+          })
           continue
         }
 
@@ -157,19 +162,19 @@ serve(async (req) => {
         // 5. Queue email via queue_email RPC
         const { data: queueId, error: queueErr } = await supabase.rpc('queue_email', {
           p_recipient_email: profile.email,
-          p_recipient_name:  profile.full_name ?? '',
-          p_subject:         template.subject,
-          p_template_id:     template.id,
-          p_template_data:   {
-            name:            profile.full_name ?? 'Student',
+          p_recipient_name: profile.full_name ?? '',
+          p_subject: template.subject,
+          p_template_id: template.id,
+          p_template_data: {
+            name: profile.full_name ?? 'Student',
             verifyUrl,
-            reminderNumber:  (reminderCount ?? 0) + 1,
-            expiresInHours:  24,
+            reminderNumber: (reminderCount ?? 0) + 1,
+            expiresInHours: 24,
           },
-          p_priority:        'high',
-          p_event_id:        null,
-          p_campaign_id:     null,
-          p_scheduled_at:    null,
+          p_priority: 'high',
+          p_event_id: null,
+          p_campaign_id: null,
+          p_scheduled_at: null,
         })
 
         if (queueErr) {
@@ -179,27 +184,26 @@ serve(async (req) => {
 
         // 6. Record reminder in verification_reminders table
         await supabase.rpc('record_verification_reminder', {
-          p_user_id:        userId,
-          p_triggered_by:   triggered_by,
+          p_user_id: userId,
+          p_triggered_by: triggered_by,
           p_trigger_source: trigger_source,
-          p_queue_id:       queueId,
+          p_queue_id: queueId,
         })
 
         // 7. Write audit log
         await supabase.from('audit_logs').insert({
           actor_id: triggered_by,
-          action:   'update',
+          action: 'update',
           resource: 'verification',
           details: {
-            action:         'verification_reminder_sent',
+            action: 'verification_reminder_sent',
             target_user_id: userId,
             trigger_source,
-            queue_id:       queueId,
+            queue_id: queueId,
           },
         })
 
         results.push({ user_id: userId, success: true })
-
       } catch (userErr: any) {
         console.error(`Error processing user ${userId}:`, userErr.message)
         results.push({ user_id: userId, success: false, error: userErr.message })
@@ -211,14 +215,29 @@ serve(async (req) => {
 
     // Log failures for debugging
     if (failureCount > 0) {
-      console.warn('Failed users:', results.filter(r => !r.success))
+      console.warn(
+        'Failed users:',
+        results.filter(r => !r.success)
+      )
+    }
+
+    // Trigger queue worker immediately to send the queued emails
+    if (successCount > 0) {
+      const workerUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/comms-queue-worker`
+      fetch(workerUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          'Content-Type': 'application/json',
+        },
+      }).catch(err => console.error('Failed to trigger queue worker:', err))
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        sent:    successCount,
-        failed:  failureCount,
+        sent: successCount,
+        failed: failureCount,
         results,
       }),
       {
@@ -226,7 +245,6 @@ serve(async (req) => {
         status: 200,
       }
     )
-
   } catch (error: any) {
     console.error('Error in send-verification-reminder:', error)
     return new Response(JSON.stringify({ error: error.message }), {
