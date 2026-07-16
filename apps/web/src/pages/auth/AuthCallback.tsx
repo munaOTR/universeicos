@@ -15,7 +15,7 @@ export function AuthCallback() {
       const supabase = getSupabaseClient()
       const searchParams = new URLSearchParams(window.location.search)
       const tokenHash = searchParams.get('token_hash')
-      const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup'
+      const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup' | 'magiclink'
 
       let sessionError: any
       let currentSession: any

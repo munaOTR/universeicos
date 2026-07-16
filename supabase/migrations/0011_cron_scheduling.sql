@@ -108,16 +108,39 @@ $$;
 
 -- The following block schedules the queue worker every minute.
 -- Ensure SUPABASE_SERVICE_ROLE_KEY and the URL are correctly provided or use vault.
+CREATE EXTENSION IF NOT EXISTS "supabase_vault" CASCADE;
+
+CREATE OR REPLACE FUNCTION public.invoke_comms_queue_worker_cron()
+RETURNS VOID
+LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  v_service_key TEXT;
+  v_url TEXT;
+BEGIN
+  -- Read the service key from vault (must be seeded by admin)
+  SELECT decrypted_secret INTO v_service_key 
+  FROM vault.decrypted_secrets 
+  WHERE name = 'service_role_key' LIMIT 1;
+
+  -- Default to local/Kong network routing for edge functions
+  v_url := 'http://supabase-kong:8000/functions/v1/comms-queue-worker';
+
+  IF v_service_key IS NOT NULL THEN
+    PERFORM net.http_post(
+      url := v_url,
+      headers := jsonb_build_object('Authorization', 'Bearer ' || v_service_key, 'Content-Type', 'application/json'),
+      body := '{}'::jsonb
+    );
+  ELSE
+    RAISE WARNING 'service_role_key not found in vault.decrypted_secrets';
+  END IF;
+END;
+$$;
+
 SELECT cron.schedule(
   'invoke-comms-queue-worker',
   '* * * * *',
-  $$
-  SELECT net.http_post(
-    url := 'http://supabase-kong:8000/functions/v1/comms-queue-worker',
-    headers := '{"Authorization": "Bearer [SERVICE_ROLE_KEY]"}'::jsonb,
-    body := '{}'::jsonb
-  )
-  $$
+  $$ SELECT public.invoke_comms_queue_worker_cron(); $$
 );
 
 -- Job 2: Reset daily quotas at midnight

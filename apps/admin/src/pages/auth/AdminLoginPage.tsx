@@ -13,7 +13,7 @@ export function AdminLoginPage() {
   const [resetEmail, setResetEmail] = useState('')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  
+
   const isBootstrap = searchParams.get('bootstrap') === 'true'
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -42,7 +42,7 @@ export function AdminLoginPage() {
         await supabase.rpc('log_security_event', {
           p_event_type: 'security_alert',
           p_email: email,
-          p_metadata: { reason: 'Multiple failed login attempts', attempts: newAttempts }
+          p_metadata: { reason: 'Multiple failed login attempts', attempts: newAttempts },
         })
       }
       return
@@ -58,17 +58,21 @@ export function AdminLoginPage() {
     e.preventDefault()
     if (!resetEmail) return
     setIsSubmitting(true)
-    
+
     const supabase = getSupabaseClient()
     const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-      redirectTo: `${window.location.origin}/auth/set-password`
+      // Must redirect to /auth/callback so verifyOtp() can process the recovery
+      // token client-side before navigating onward to /auth/set-password.
+      redirectTo: `${window.location.origin}/auth/callback`,
     })
-    
+
     setIsSubmitting(false)
     if (error) {
       toast.error('Failed to send reset link', { description: error.message })
     } else {
-      toast.success('Check your email!', { description: 'We sent you a secure password reset link.' })
+      toast.success('Check your email!', {
+        description: 'We sent you a secure password reset link.',
+      })
       setShowForgotPassword(false)
     }
   }
@@ -79,28 +83,34 @@ export function AdminLoginPage() {
     setIsSubmitting(true)
 
     const supabase = getSupabaseClient()
-    
+
     // First, verify via RPC if this super_admin actually needs bootstrap
     const { data: needsBootstrap, error: rpcError } = await supabase.rpc('check_bootstrap_status', {
-      p_email: resetEmail
+      p_email: resetEmail,
     })
 
     if (rpcError || !needsBootstrap) {
       setIsSubmitting(false)
-      toast.error('Bootstrap failed', { description: 'Account is not eligible for bootstrap or does not exist.' })
+      toast.error('Bootstrap failed', {
+        description: 'Account is not eligible for bootstrap or does not exist.',
+      })
       return
     }
 
     // If valid, send recovery link
     const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-      redirectTo: `${window.location.origin}/auth/set-password`
+      // Must redirect to /auth/callback so verifyOtp() can process the recovery
+      // token client-side before navigating onward to /auth/set-password.
+      redirectTo: `${window.location.origin}/auth/callback`,
     })
 
     setIsSubmitting(false)
     if (error) {
       toast.error('Failed to send setup link', { description: error.message })
     } else {
-      toast.success('Check your email!', { description: 'We sent you a secure link to initialize your password.' })
+      toast.success('Check your email!', {
+        description: 'We sent you a secure link to initialize your password.',
+      })
       setResetEmail('')
     }
   }
@@ -117,7 +127,7 @@ export function AdminLoginPage() {
               <h1 className="text-2xl font-bold text-zinc-900">Super Admin Setup</h1>
               <p className="text-zinc-500 text-sm mt-2">Initialize your master password</p>
             </div>
-            
+
             <form onSubmit={handleBootstrap} className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="bootstrap-email">Super Admin Email</Label>
@@ -125,12 +135,16 @@ export function AdminLoginPage() {
                   id="bootstrap-email"
                   type="email"
                   value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
+                  onChange={e => setResetEmail(e.target.value)}
                   placeholder="admin@universeicos.app"
                   required
                 />
               </div>
-              <Button type="submit" className="w-full mt-4 bg-amber-600 hover:bg-amber-700 text-white" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full mt-4 bg-amber-600 hover:bg-amber-700 text-white"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? 'Verifying...' : 'Initialize Account'}
               </Button>
             </form>
@@ -149,17 +163,17 @@ export function AdminLoginPage() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   placeholder="admin@universeicos.app"
                   required
                 />
               </div>
-              
+
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => {
                       setResetEmail(email)
                       setShowForgotPassword(true)
@@ -173,7 +187,7 @@ export function AdminLoginPage() {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
                 />
@@ -187,11 +201,20 @@ export function AdminLoginPage() {
         )}
       </div>
 
-      <Modal isOpen={showForgotPassword} onClose={() => setShowForgotPassword(false)} title="Reset Password">
+      <Modal
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+        title="Reset Password"
+      >
         <div className="p-6 text-center space-y-6">
           <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+              />
             </svg>
           </div>
           <div>
@@ -207,7 +230,7 @@ export function AdminLoginPage() {
                 id="reset-email"
                 type="email"
                 value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}
+                onChange={e => setResetEmail(e.target.value)}
                 placeholder="admin@universeicos.app"
                 required
                 autoFocus
@@ -217,10 +240,10 @@ export function AdminLoginPage() {
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? 'Sending link...' : 'Send Reset Link'}
               </Button>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                className="w-full text-zinc-500" 
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full text-zinc-500"
                 onClick={() => setShowForgotPassword(false)}
               >
                 Cancel
@@ -232,5 +255,3 @@ export function AdminLoginPage() {
     </div>
   )
 }
-
-

@@ -129,9 +129,13 @@ serve(async req => {
           continue
         }
 
-        // 2. Generate a fresh verification token via Supabase Auth Admin
+        // 2. Generate a fresh verification token via Supabase Auth Admin.
+        //    We use `magiclink` (not `signup`) because the user already exists in auth.users —
+        //    calling `signup` on an existing email causes a 500 Internal Server Error.
+        //    A magic link signs the user in AND confirms their email on click, which is exactly
+        //    what we need for a re-verification reminder.
         const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
-          type: 'signup',
+          type: 'magiclink',
           email: profile.email,
         })
 
@@ -147,9 +151,10 @@ serve(async req => {
         // 3. Build the verification URL pointing directly to our frontend callback.
         //    Supabase returns `hashed_token` in generateLink; we pass it as `token_hash` in the
         //    URL because that's what verifyOtp() expects on the client side.
+        //    The type must be `magiclink` to match the token type generated above.
         const params = new URLSearchParams({
           token_hash: linkData.properties.hashed_token,
-          type: 'signup',
+          type: 'magiclink',
         })
         const verifyUrl = `${webAppUrl}/auth/callback?${params.toString()}`
 
@@ -224,13 +229,17 @@ serve(async req => {
     // Trigger queue worker immediately to send the queued emails
     if (successCount > 0) {
       const workerUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/comms-queue-worker`
-      fetch(workerUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-          'Content-Type': 'application/json',
-        },
-      }).catch(err => console.error('Failed to trigger queue worker:', err))
+      try {
+        await fetch(workerUrl, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            'Content-Type': 'application/json',
+          },
+        })
+      } catch (err) {
+        console.error('Failed to trigger queue worker:', err)
+      }
     }
 
     return new Response(
