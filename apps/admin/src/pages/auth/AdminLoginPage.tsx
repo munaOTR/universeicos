@@ -20,17 +20,41 @@ export function AdminLoginPage() {
     e.preventDefault()
     if (!email || !password) return
 
+    if (!navigator.onLine) {
+      toast.error('Network Error', {
+        description: 'Please check your internet connection and try again.',
+      })
+      return
+    }
+
     setIsSubmitting(true)
     const supabase = getSupabaseClient()
 
+    // 1. Check if account is already locked
+    const { data: statusData, error: statusError } = await supabase.rpc('check_account_status', {
+      user_email: email,
+    })
+    if (!statusError && statusData?.is_locked) {
+      setIsSubmitting(false)
+      toast.error('Account Locked', {
+        description: 'Too many failed login attempts. Please try again in 15 minutes.',
+      })
+      return
+    }
+
+    // 2. Attempt login
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
+    // 3. Record outcome
+    await supabase.rpc('record_login_attempt', { user_email: email, is_success: !error })
+
     setIsSubmitting(false)
 
     if (error) {
+      // Keep local tracking to log security alert
       const newAttempts = failedAttempts + 1
       setFailedAttempts(newAttempts)
 
@@ -49,7 +73,6 @@ export function AdminLoginPage() {
     }
 
     toast.success('Login successful')
-    // Reset failed attempts
     setFailedAttempts(0)
     navigate(ROUTES.ADMIN)
   }

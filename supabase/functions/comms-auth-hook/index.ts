@@ -1,18 +1,18 @@
-import { serve } from "std/http/server.ts"
-import { createClient } from "@supabase/supabase-js"
-import { render } from "npm:@react-email/render@0.0.12"
-import React from "npm:react@18.2.0"
+import { serve } from 'std/http/server.ts'
+import { createClient } from '@supabase/supabase-js'
+import { render } from 'npm:@react-email/render@0.0.12'
+import React from 'npm:react@18.2.0'
 
 // Import all auth email templates
-import { WelcomeEmail } from "../../../packages/email/src/templates/auth/WelcomeEmail.tsx"
-import { VerifyEmail } from "../../../packages/email/src/templates/auth/VerifyEmail.tsx"
-import { MagicLinkEmail } from "../../../packages/email/src/templates/auth/MagicLinkEmail.tsx"
-import { ResetPasswordEmail } from "../../../packages/email/src/templates/auth/ResetPasswordEmail.tsx"
-import { PasswordChangedEmail } from "../../../packages/email/src/templates/auth/PasswordChangedEmail.tsx"
-import { AdminInvitationEmail } from "../../../packages/email/src/templates/auth/AdminInvitationEmail.tsx"
-import { AccountActivatedEmail } from "../../../packages/email/src/templates/auth/AccountActivatedEmail.tsx"
-import { AccountSuspendedEmail } from "../../../packages/email/src/templates/auth/AccountSuspendedEmail.tsx"
-import { Resend } from "npm:resend@2.0.0"
+import { WelcomeEmail } from '../../../packages/email/src/templates/auth/WelcomeEmail.tsx'
+import { VerifyEmail } from '../../../packages/email/src/templates/auth/VerifyEmail.tsx'
+import { MagicLinkEmail } from '../../../packages/email/src/templates/auth/MagicLinkEmail.tsx'
+import { ResetPasswordEmail } from '../../../packages/email/src/templates/auth/ResetPasswordEmail.tsx'
+import { PasswordChangedEmail } from '../../../packages/email/src/templates/auth/PasswordChangedEmail.tsx'
+import { AdminInvitationEmail } from '../../../packages/email/src/templates/auth/AdminInvitationEmail.tsx'
+import { AccountActivatedEmail } from '../../../packages/email/src/templates/auth/AccountActivatedEmail.tsx'
+import { AccountSuspendedEmail } from '../../../packages/email/src/templates/auth/AccountSuspendedEmail.tsx'
+import { Resend } from 'npm:resend@2.0.0'
 
 /**
  * comms-auth-hook
@@ -36,7 +36,7 @@ import { Resend } from "npm:resend@2.0.0"
  *   }
  * }
  */
-serve(async (req) => {
+serve(async req => {
   // Must return 200 even for hook failures to avoid Supabase blocking auth
   const respond = (body: object, status = 200) =>
     new Response(JSON.stringify(body), {
@@ -46,22 +46,49 @@ serve(async (req) => {
 
   try {
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
-    const supabaseUrl  = Deno.env.get('SUPABASE_URL')!
-    const supabaseKey  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
-    if (!resendApiKey) {
-      console.error('[comms-auth-hook] RESEND_API_KEY not set')
-      return respond({ error: 'missing resend key' }, 500)
-    }
-
-    const resend   = new Resend(resendApiKey)
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const body = await req.json()
     const { user, email_data } = body
 
+    // Helper to log failures to the database before returning 200
+    const logFailure = async (reason: string, details?: any) => {
+      try {
+        if (!supabase) return
+        await supabase.from('email_logs').insert({
+          event_type: 'failed_auth_fallback',
+          provider_name: 'resend',
+          recipient_email: user?.email || 'unknown',
+          metadata: {
+            action_type: email_data?.email_action_type || 'unknown',
+            user_id: user?.id,
+            token_hash: email_data?.token_hash,
+            redirect_to: email_data?.redirect_to,
+            site_url: email_data?.site_url,
+            reason,
+            details,
+            sent_via: 'auth-hook',
+          },
+        })
+      } catch (err) {
+        console.error('[comms-auth-hook] Failed to log email error:', err)
+      }
+    }
+
+    if (!resendApiKey) {
+      console.error('[comms-auth-hook] RESEND_API_KEY not set')
+      await logFailure('missing_resend_api_key')
+      return respond({ error: 'missing resend key, falling back' }, 200)
+    }
+
+    const resend = new Resend(resendApiKey)
+
     if (!user?.email || !email_data?.email_action_type) {
-      return respond({ error: 'invalid hook payload' }, 400)
+      console.error('[comms-auth-hook] Invalid hook payload')
+      return respond({ error: 'invalid hook payload' }, 200)
     }
 
     const actionType: string = email_data.email_action_type
@@ -69,7 +96,7 @@ serve(async (req) => {
 
     // Use redirect_to if available and valid, otherwise fallback to siteUrl
     let baseUrl = 'https://universeicos.app'
-    
+
     if (email_data.redirect_to) {
       try {
         const url = new URL(email_data.redirect_to)
@@ -81,10 +108,12 @@ serve(async (req) => {
     } else {
       baseUrl = email_data.site_url || baseUrl
     }
-    
+
     // If the request came from the admin app or is for an admin invite, ensure we use the admin subdomain
     if (actionType === 'invite' || baseUrl.includes('admin') || baseUrl.includes('5174')) {
-      baseUrl = baseUrl.includes('5174') ? 'http://localhost:5174' : 'https://admin.universeicos.app'
+      baseUrl = baseUrl.includes('5174')
+        ? 'http://localhost:5174'
+        : 'https://admin.universeicos.app'
     } else if (baseUrl.includes('cjfwpypmzvmetkwgceom.supabase.co')) {
       // Safety catch: If Supabase passes its own API URL due to a config error, fallback to localhost for dev or prod for prod
       baseUrl = 'http://localhost:5173'
@@ -93,17 +122,17 @@ serve(async (req) => {
     const actionUrl = `${baseUrl}/auth/callback?token_hash=${email_data.token_hash}&type=${actionType}`
 
     let subject = ''
-    let html    = ''
-    let text    = ''
+    let html = ''
+    let text = ''
 
     switch (actionType) {
       case 'signup':
       case 'email_change': {
         subject = 'Verify your Universe email'
         const el = React.createElement(VerifyEmail, {
-          name:           firstName,
+          name: firstName,
           verificationUrl: actionUrl,
-          email:          user.email,
+          email: user.email,
         })
         html = render(el)
         text = render(el, { plainText: true })
@@ -113,8 +142,8 @@ serve(async (req) => {
       case 'recovery': {
         subject = 'Reset your Universe password'
         const el = React.createElement(ResetPasswordEmail, {
-          name:          firstName,
-          resetUrl:      actionUrl,
+          name: firstName,
+          resetUrl: actionUrl,
         })
         html = render(el)
         text = render(el, { plainText: true })
@@ -124,9 +153,9 @@ serve(async (req) => {
       case 'magiclink': {
         subject = 'Your Universe login link'
         const el = React.createElement(MagicLinkEmail, {
-          name:      firstName,
-          loginUrl:  actionUrl,
-          email:     user.email,
+          name: firstName,
+          loginUrl: actionUrl,
+          email: user.email,
         })
         html = render(el)
         text = render(el, { plainText: true })
@@ -135,13 +164,13 @@ serve(async (req) => {
 
       case 'invite': {
         subject = "You've been invited to Universe"
-        const role        = user.user_metadata?.role || 'admin'
+        const role = user.user_metadata?.role || 'admin'
         const inviterName = user.user_metadata?.invited_by_name || 'The Universe Team'
         const el = React.createElement(AdminInvitationEmail, {
-          name:         firstName,
+          name: firstName,
           inviterName,
           role,
-          setupUrl:     actionUrl,
+          setupUrl: actionUrl,
         })
         html = render(el)
         text = render(el, { plainText: true })
@@ -157,8 +186,8 @@ serve(async (req) => {
 
     // Send via Resend
     const { error: sendError } = await resend.emails.send({
-      from:    'Universe <hello@universeicos.app>',
-      to:      user.email,
+      from: 'Universe <hello@universeicos.app>',
+      to: user.email,
       subject,
       html,
       text,
@@ -166,27 +195,43 @@ serve(async (req) => {
 
     if (sendError) {
       console.error('[comms-auth-hook] Resend error:', sendError)
+      await logFailure('resend_api_error', sendError)
       // Still return 200 so Supabase doesn't block the auth flow
-      return respond({ error: sendError.message, fallback: true })
+      return respond({ error: sendError.message, fallback: true }, 200)
     }
 
     // Log this auth email in our communication infrastructure
     await supabase.from('email_logs').insert({
-      event_type:     actionType,
-      provider_name:  'resend',
+      event_type: actionType,
+      provider_name: 'resend',
       recipient_email: user.email,
       metadata: {
         action_type: actionType,
-        user_id:     user.id,
-        sent_via:    'auth-hook',
+        user_id: user.id,
+        sent_via: 'auth-hook',
       },
     })
 
     return respond({ success: true })
-
-  } catch (error) {
+  } catch (error: any) {
     console.error('[comms-auth-hook] Unexpected error:', error)
+    // Try to log the unexpected error to the DB if possible, ignoring errors during logging
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        await supabase.from('email_logs').insert({
+          event_type: 'failed_auth_fallback',
+          provider_name: 'system',
+          metadata: { reason: 'unexpected_error', details: error?.message || 'unknown' },
+        })
+      }
+    } catch (_) {
+      /* ignore */
+    }
+
     // Return 200 to avoid blocking auth flow — log the error
-    return respond({ error: error.message, fallback: true })
+    return respond({ error: error?.message || 'unknown', fallback: true }, 200)
   }
 })

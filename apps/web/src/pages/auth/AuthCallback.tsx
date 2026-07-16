@@ -11,89 +11,89 @@ export function AuthCallback() {
   const { markInteraction } = useInteractionState()
 
   useEffect(() => {
-    const handleCallback = async () => {
-      const supabase = getSupabaseClient()
-      const searchParams = new URLSearchParams(window.location.search)
-      const tokenHash = searchParams.get('token_hash')
-      const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup' | 'magiclink'
+    let mounted = true
+    const supabase = getSupabaseClient()
 
-      let sessionError: any
-      let currentSession: any
+    const handleSuccess = (session: any) => {
+      if (!mounted) return
+      // Clean up the URL to prevent token leakage in history or referers
+      window.history.replaceState({}, document.title, window.location.pathname)
 
-      if (tokenHash && type) {
-        const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
-        sessionError = error
-        currentSession = data?.session
+      toast.success('Successfully logged in!')
+      markInteraction(session.user.email)
+
+      // Only send the welcome email for brand-new signups (created within the last 5 minutes)
+      const isNewUser = new Date(session.user.created_at).getTime() > Date.now() - 5 * 60 * 1000
+      if (isNewUser) {
+        // Fire welcome email asynchronously — do not block navigation
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/email-webhook`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ event: 'welcome', userId: session.user.id }),
+        }).catch(err => console.error('Failed to trigger welcome email:', err))
+
+        navigate(ROUTES.WAITLIST_SUCCESS, { replace: true })
       } else {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession()
-        sessionError = error
-        currentSession = session
-      }
-
-      if (sessionError) {
-        setError(sessionError.message)
-        return
-      }
-
-      if (currentSession) {
-        const session = currentSession
-        toast.success('Successfully logged in!')
-        markInteraction(session.user.email)
-
-        // Only send the welcome email for brand-new signups (created within the last 5 minutes)
-        const isNewUser = new Date(session.user.created_at).getTime() > Date.now() - 5 * 60 * 1000
-        if (isNewUser) {
-          // Fire welcome email asynchronously — do not await, do not block navigation
-          fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/email-webhook`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${session.access_token}`,
-            },
-            body: JSON.stringify({ event: 'welcome', userId: session.user.id }),
-          }).catch(err => console.error('Failed to trigger welcome email:', err))
-
-          navigate(ROUTES.WAITLIST_SUCCESS, { replace: true })
-        } else {
-          navigate(ROUTES.DASHBOARD, { replace: true })
-        }
-      } else {
-        // No session yet — URL hash may not have been parsed. Wait briefly and retry.
-        setTimeout(async () => {
-          const {
-            data: { session },
-          } = await supabase.auth.getSession()
-          if (session) {
-            toast.success('Successfully logged in!')
-            markInteraction(session.user.email)
-
-            const isNewUser =
-              new Date(session.user.created_at).getTime() > Date.now() - 5 * 60 * 1000
-            if (isNewUser) {
-              fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/email-webhook`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({ event: 'welcome', userId: session.user.id }),
-              }).catch(err => console.error('Failed to trigger welcome email:', err))
-
-              navigate(ROUTES.WAITLIST_SUCCESS, { replace: true })
-            } else {
-              navigate(ROUTES.DASHBOARD, { replace: true })
-            }
-          } else {
-            setError('Invalid or expired magic link.')
-          }
-        }, 1000)
+        navigate(ROUTES.DASHBOARD, { replace: true })
       }
     }
 
-    handleCallback()
+    const searchParams = new URLSearchParams(window.location.search)
+    const tokenHash = searchParams.get('token_hash')
+    const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup' | 'magiclink'
+
+    if (tokenHash && type) {
+      // 1. Explicit token hash verification (Query Params)
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type }).then(({ data, error }) => {
+        if (!mounted) return
+        if (error) setError(error.message)
+        else if (data?.session) handleSuccess(data.session)
+      })
+    } else {
+      // 2. Hash-based resolution (Fragment processing by Supabase Auth)
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          handleSuccess(session)
+        }
+      })
+
+      // We also check getSession in case the event fired before we mounted
+      supabase.auth.getSession().then(({ data: { session }, error }) => {
+        if (!mounted) return
+        if (error) {
+          setError(error.message)
+        } else if (session) {
+          handleSuccess(session)
+        } else if (!window.location.hash.includes('access_token')) {
+          // If there is no session and no hash to parse, the link is definitely invalid
+          setError('Invalid or expired secure link.')
+        } else {
+          // We have a hash but no session yet, meaning onAuthStateChange is still processing.
+          // Fallback timeout just in case the event listener fails to fire on weird devices.
+          setTimeout(() => {
+            if (!mounted) return
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              if (session) handleSuccess(session)
+              else setError('Invalid or expired secure link.')
+            })
+          }, 3000)
+        }
+      })
+
+      return () => {
+        mounted = false
+        subscription.unsubscribe()
+      }
+    }
+
+    return () => {
+      mounted = false
+    }
   }, [navigate, markInteraction])
 
   if (error) {

@@ -9,51 +9,74 @@ export function AuthCallback() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        const supabase = getSupabaseClient()
-        const searchParams = new URLSearchParams(window.location.search)
-        const tokenHash = searchParams.get('token_hash')
-        const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup'
+    let mounted = true
+    const supabase = getSupabaseClient()
 
-        let sessionError: any
-        let isRecoveryOrInvite: boolean
+    const searchParams = new URLSearchParams(window.location.search)
+    const tokenHash = searchParams.get('token_hash')
+    const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup'
+    const hash = window.location.hash
 
-        if (tokenHash && type) {
-          // If we received a token_hash, verify it directly
-          const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
-          sessionError = error
-          isRecoveryOrInvite = type === 'recovery' || type === 'invite'
-        } else {
-          // Otherwise rely on default hash/code handling
-          const hash = window.location.hash
-          isRecoveryOrInvite =
-            hash.includes('type=recovery') ||
-            hash.includes('type=invite') ||
-            type === 'recovery' ||
-            type === 'invite'
-          const { error } = await supabase.auth.getSession()
-          sessionError = error
-        }
+    const isRecoveryOrInvite =
+      type === 'recovery' ||
+      type === 'invite' ||
+      hash.includes('type=recovery') ||
+      hash.includes('type=invite')
 
-        if (sessionError) {
-          throw sessionError
-        }
+    const handleSuccess = () => {
+      if (!mounted) return
+      window.history.replaceState({}, document.title, window.location.pathname)
 
-        // Delay slightly so token can persist before redirect
-        setTimeout(() => {
-          if (isRecoveryOrInvite) {
-            navigate('/auth/set-password', { replace: true })
-          } else {
-            navigate(ROUTES.ADMIN, { replace: true })
-          }
-        }, 1000)
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Authentication failed during callback')
+      if (isRecoveryOrInvite) {
+        navigate('/auth/set-password', { replace: true })
+      } else {
+        navigate(ROUTES.ADMIN, { replace: true })
       }
     }
 
-    handleAuthCallback()
+    if (tokenHash && type) {
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type }).then(({ data, error }) => {
+        if (!mounted) return
+        if (error) setError(error.message)
+        else if (data?.session) handleSuccess()
+      })
+    } else {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          handleSuccess()
+        }
+      })
+
+      supabase.auth.getSession().then(({ data: { session }, error }) => {
+        if (!mounted) return
+        if (error) {
+          setError(error.message)
+        } else if (session) {
+          handleSuccess()
+        } else if (!window.location.hash.includes('access_token')) {
+          setError('Invalid or expired secure link.')
+        } else {
+          setTimeout(() => {
+            if (!mounted) return
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              if (session) handleSuccess()
+              else setError('Authentication failed during callback. Link may be expired.')
+            })
+          }, 3000)
+        }
+      })
+
+      return () => {
+        mounted = false
+        subscription.unsubscribe()
+      }
+    }
+
+    return () => {
+      mounted = false
+    }
   }, [navigate])
 
   if (error) {
