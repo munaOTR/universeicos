@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react'
 import { ROUTES } from '@universe/constants'
 import { AdminLayout } from './layouts/AdminLayout'
 import { RequireAuth, RoleGuard, GuestRoute } from '@universe/auth'
-import { Spinner } from '@universe/ui'
+import { Spinner, RouteErrorFallback } from '@universe/ui'
 
 // Auth Pages
 import { AdminLoginPage } from './pages/auth/AdminLoginPage'
@@ -11,17 +11,37 @@ import { AuthCallback } from './pages/auth/AuthCallback'
 import { SetPasswordPage } from './pages/auth/SetPasswordPage'
 
 // Admin Pages (Lazy loaded)
-const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })))
+const DashboardPage = lazy(() =>
+  import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage }))
+)
 const UsersPage = lazy(() => import('./pages/UsersPage').then(m => ({ default: m.UsersPage })))
-const GamificationPage = lazy(() => import('./pages/GamificationPage').then(m => ({ default: m.GamificationPage })))
-const WaitlistPage = lazy(() => import('./pages/WaitlistPage').then(m => ({ default: m.WaitlistPage })))
-const ReferralsPage = lazy(() => import('./pages/ReferralsPage').then(m => ({ default: m.ReferralsPage })))
-const AnnouncementsPage = lazy(() => import('./pages/AnnouncementsPage').then(m => ({ default: m.AnnouncementsPage })))
-const SurveysPage = lazy(() => import('./pages/SurveysPage').then(m => ({ default: m.SurveysPage })))
-const EmailsPage = lazy(() => import('./pages/email-center/EmailCenterPage').then(m => ({ default: m.EmailCenterPage })))
-const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })))
-const MonitoringPage = lazy(() => import('./pages/MonitoringPage').then(m => ({ default: m.MonitoringPage })))
-const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })))
+const GamificationPage = lazy(() =>
+  import('./pages/GamificationPage').then(m => ({ default: m.GamificationPage }))
+)
+const WaitlistPage = lazy(() =>
+  import('./pages/WaitlistPage').then(m => ({ default: m.WaitlistPage }))
+)
+const ReferralsPage = lazy(() =>
+  import('./pages/ReferralsPage').then(m => ({ default: m.ReferralsPage }))
+)
+const AnnouncementsPage = lazy(() =>
+  import('./pages/AnnouncementsPage').then(m => ({ default: m.AnnouncementsPage }))
+)
+const SurveysPage = lazy(() =>
+  import('./pages/SurveysPage').then(m => ({ default: m.SurveysPage }))
+)
+const EmailsPage = lazy(() =>
+  import('./pages/email-center/EmailCenterPage').then(m => ({ default: m.EmailCenterPage }))
+)
+const AnalyticsPage = lazy(() =>
+  import('./pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage }))
+)
+const MonitoringPage = lazy(() =>
+  import('./pages/MonitoringPage').then(m => ({ default: m.MonitoringPage }))
+)
+const SettingsPage = lazy(() =>
+  import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage }))
+)
 const LogsPage = lazy(() => import('./pages/LogsPage').then(m => ({ default: m.LogsPage })))
 
 function NotFoundPage() {
@@ -29,7 +49,9 @@ function NotFoundPage() {
     <div className="flex flex-col items-center justify-center min-h-dvh bg-zinc-50 p-4 text-center">
       <h1 className="text-4xl font-bold text-zinc-900 mb-2">404</h1>
       <p className="text-zinc-500 mb-6">Page not found</p>
-      <a href={ROUTES.ADMIN} className="text-primary-600 hover:underline">Go to Dashboard</a>
+      <a href={ROUTES.ADMIN} className="text-primary-600 hover:underline">
+        Go to Dashboard
+      </a>
     </div>
   )
 }
@@ -38,8 +60,18 @@ function ComingSoonPage({ title, description }: { title: string; description: st
   return (
     <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
       <div className="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
-        <svg className="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+        <svg
+          className="w-8 h-8 text-primary-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"
+          />
         </svg>
       </div>
       <h2 className="text-xl font-bold text-zinc-900 mb-2">{title}</h2>
@@ -65,6 +97,7 @@ export const router = createBrowserRouter([
         <AdminLoginPage />
       </GuestRoute>
     ),
+    errorElement: <RouteErrorFallback />,
   },
   {
     path: '/auth/callback',
@@ -85,7 +118,7 @@ export const router = createBrowserRouter([
         </RoleGuard>
       </RequireAuth>
     ),
-    errorElement: <NotFoundPage />,
+    errorElement: <RouteErrorFallback />,
     children: [
       { index: true, element: <DashboardPage /> },
       { path: ROUTES.ADMIN_USERS, element: <UsersPage /> },
