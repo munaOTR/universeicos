@@ -277,8 +277,8 @@ importers:
         specifier: ^7.54.2
         version: 7.80.0(react@18.3.1)
       react-router-dom:
-        specifier: ^6.23.1
-        version: 6.30.4(react-dom@19.2.7(react@18.3.1))(react@18.3.1)
+        specifier: ^7.18.1
+        version: 7.18.1(react-dom@19.2.7(react@18.3.1))(react@18.3.1)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -988,10 +988,6 @@ packages:
         optional: true
       react-redux:
         optional: true
-
-  '@remix-run/router@1.23.3':
-    resolution: {integrity: sha512-4An71tdz9X8+3sI4Qqqd2LWd9vS39J7sqd9EU4Scw7TJE/qB10Flv/UuqbPVgfQV9XoK8Np6jNquZitnZq5i+Q==}
-    engines: {node: '>=14.0.0'}
 
   '@rolldown/binding-android-arm64@1.1.4':
     resolution: {integrity: sha512-EZLpf/8y7GXkkra90ML47kzik/GMP3EMcE9bPyHmRfxLC6z9+aW5A8poCsoxjrT5GfEcNAAvWwUHjvP1pUQkfw==}
@@ -2249,25 +2245,12 @@ packages:
       redux:
         optional: true
 
-  react-router-dom@6.30.4:
-    resolution: {integrity: sha512-q4HvNl+mmDdkS0g+MqiBZNteQJCuimWoOyHMy4T/RQLAn9Z29+E91QXRaxOujeMl2HTzRSS0KFPd7lxX3PjV0Q==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      react: ^18.2.0
-      react-dom: ^18.2.0
-
   react-router-dom@7.18.1:
     resolution: {integrity: sha512-KaZh+X/6UtEp28x51AUYZDMg9NGoz2ja3dNHa+ta/tk40vCzKhQ/RypCWBMLbmDr6//E24Vv5uPsrqXFozdkAg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
-
-  react-router@6.30.4:
-    resolution: {integrity: sha512-SVUsDe+DybHM/WmYKIVYhZh1o5Dcuf16yM6WjG02Q9XVFMZIJyHYhwrr6bFBXZkVP6z69kNkMyBCujt8FaFLJA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      react: ^18.2.0
 
   react-router@7.18.1:
     resolution: {integrity: sha512-GDLgg3i3uM0aeJO3Fm+TCS+sDQ7gu12T6x0qdTEzcwqEfleci7JwugVNIF3U//0FWKnJT7ptG+20B2jfDqnZAg==}
@@ -3160,8 +3143,6 @@ snapshots:
     optionalDependencies:
       react: 18.3.1
       react-redux: 9.3.0(@types/react@19.2.17)(react@18.3.1)(redux@5.0.1)
-
-  '@remix-run/router@1.23.3': {}
 
   '@rolldown/binding-android-arm64@1.1.4':
     optional: true
@@ -4306,23 +4287,17 @@ snapshots:
       '@types/react': 19.2.17
       redux: 5.0.1
 
-  react-router-dom@6.30.4(react-dom@19.2.7(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@remix-run/router': 1.23.3
-      react: 18.3.1
-      react-dom: 19.2.7(react@18.3.1)
-      react-router: 6.30.4(react@18.3.1)
-
   react-router-dom@7.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router: 7.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  react-router@6.30.4(react@18.3.1):
+  react-router-dom@7.18.1(react-dom@19.2.7(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@remix-run/router': 1.23.3
       react: 18.3.1
+      react-dom: 19.2.7(react@18.3.1)
+      react-router: 7.18.1(react-dom@19.2.7(react@18.3.1))(react@18.3.1)
 
   react-router@7.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -4331,6 +4306,14 @@ snapshots:
       set-cookie-parser: 2.7.2
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
+
+  react-router@7.18.1(react-dom@19.2.7(react@18.3.1))(react@18.3.1):
+    dependencies:
+      cookie: 1.1.1
+      react: 18.3.1
+      set-cookie-parser: 2.7.2
+    optionalDependencies:
+      react-dom: 19.2.7(react@18.3.1)
 
   react@18.3.1:
     dependencies:

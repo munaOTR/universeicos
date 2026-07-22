@@ -17,26 +17,9 @@ import { WaitlistSuccessPage } from './pages/public/WaitlistSuccessPage'
 
 // Auth Pages
 import { AuthCallback } from './pages/auth/AuthCallback'
+import { LoginPage } from './pages/auth/LoginPage'
 
-// Dashboard Pages — lazy loaded for code splitting
-const DashboardHomePage = lazy(() =>
-  import('./pages/dashboard/DashboardHomePage').then(m => ({ default: m.DashboardHomePage }))
-)
-const ReferralsPage = lazy(() =>
-  import('./pages/dashboard/ReferralsPage').then(m => ({ default: m.ReferralsPage }))
-)
-const LeaderboardPage = lazy(() =>
-  import('./pages/dashboard/LeaderboardPage').then(m => ({ default: m.LeaderboardPage }))
-)
-const ProfilePage = lazy(() =>
-  import('./pages/dashboard/ProfilePage').then(m => ({ default: m.ProfilePage }))
-)
-const SettingsPage = lazy(() =>
-  import('./pages/dashboard/SettingsPage').then(m => ({ default: m.SettingsPage }))
-)
-const SurveysPage = lazy(() =>
-  import('./pages/dashboard/SurveysPage').then(m => ({ default: m.SurveysPage }))
-)
+// Dashboard Pages — lazy loaded for code splitting will use route.lazy()
 
 // --- Remaining Placeholder Pages ---
 function RoadmapPage() {
@@ -103,7 +86,7 @@ export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     errorElement: <RouteErrorFallback />,
-    children: [],
+    children: [{ path: ROUTES.LOGIN, element: <LoginPage /> }],
   },
   {
     element: (
@@ -121,13 +104,46 @@ export const router = createBrowserRouter([
     ),
     errorElement: <RouteErrorFallback />,
     children: [
-      { path: ROUTES.DASHBOARD, element: <DashboardHomePage /> },
-      { path: ROUTES.DASHBOARD_REFERRALS, element: <ReferralsPage /> },
-      { path: ROUTES.DASHBOARD_LEADERBOARD, element: <LeaderboardPage /> },
-      { path: ROUTES.DASHBOARD_PROFILE, element: <ProfilePage /> },
-      { path: ROUTES.DASHBOARD_NOTIFICATIONS, element: <NotificationsPage /> },
-      { path: ROUTES.DASHBOARD_SETTINGS, element: <SettingsPage /> },
-      { path: ROUTES.DASHBOARD_SURVEYS, element: <SurveysPage /> },
+      {
+        path: ROUTES.DASHBOARD,
+        lazy: () =>
+          import('./pages/dashboard/DashboardHomePage').then(m => ({
+            Component: m.DashboardHomePage,
+          })),
+      },
+      {
+        path: ROUTES.DASHBOARD_REFERRALS,
+        lazy: () =>
+          import('./pages/dashboard/ReferralsPage').then(m => ({ Component: m.ReferralsPage })),
+      },
+      {
+        path: ROUTES.DASHBOARD_LEADERBOARD,
+        lazy: () =>
+          import('./pages/dashboard/LeaderboardPage').then(m => ({ Component: m.LeaderboardPage })),
+      },
+      {
+        path: ROUTES.DASHBOARD_PROFILE,
+        lazy: () =>
+          import('./pages/dashboard/ProfilePage').then(m => ({ Component: m.ProfilePage })),
+      },
+      {
+        path: ROUTES.DASHBOARD_NOTIFICATIONS,
+        element: <NotificationsPage />,
+      },
+      {
+        path: ROUTES.DASHBOARD_SETTINGS,
+        lazy: () =>
+          import('./pages/dashboard/SettingsPage').then(m => ({ Component: m.SettingsPage })),
+      },
+      {
+        path: ROUTES.DASHBOARD_SURVEYS,
+        lazy: () =>
+          import('./pages/dashboard/SurveysPage').then(m => ({ Component: m.SurveysPage })),
+      },
     ],
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ])

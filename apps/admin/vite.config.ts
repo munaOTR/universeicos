@@ -12,7 +12,14 @@ export default defineConfig({
     port: 5174,
   },
   resolve: {
-    dedupe: ['react', 'react-dom', 'sonner', '@supabase/supabase-js', '@tanstack/react-query'],
+    dedupe: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'sonner',
+      '@supabase/supabase-js',
+      '@tanstack/react-query',
+    ],
     alias: {
       '@universe/ui': path.resolve(__dirname, '../../packages/ui/src'),
       '@universe/auth': path.resolve(__dirname, '../../packages/auth/src'),

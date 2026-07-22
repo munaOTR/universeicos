@@ -7,13 +7,12 @@ export function useProfile(userId: string | undefined) {
     queryFn: async () => {
       if (!userId) return null
       const supabase = getSupabaseClient()
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single()
 
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116') return null
+        throw error
+      }
       return data
     },
     enabled: !!userId,

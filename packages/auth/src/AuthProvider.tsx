@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const {
     data: profileData,
-    isLoading: isLoadingProfile,
+    isPending: isPendingProfile,
     error: profileError,
   } = useQuery({
     queryKey: ['auth', 'profile', user?.id],
@@ -54,7 +54,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!user) return null
       const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
 
-      if (error) throw error
+      if (error) {
+        if (error.code === 'PGRST116') return null
+        throw error
+      }
       return data
     },
     enabled: !!user,
@@ -62,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const {
     data: accessData,
-    isLoading: isLoadingAccess,
+    isPending: isPendingAccess,
     error: accessError,
   } = useQuery({
     queryKey: ['auth', 'access', user?.id],
@@ -128,7 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [supabase.auth, queryClient])
 
-  const isLoading = isLoadingSession || (!!user && (isLoadingProfile || isLoadingAccess))
+  // Fix: robust loading check that prevents momentary flashes of isLoading=false
+  // when moving between states, by relying on data presence when user exists
+  const isProfileLoading = !!user && profileData === undefined && !profileError
+  const isAccessLoading = !!user && accessData === undefined && !accessError
+  const isLoading = isLoadingSession || isProfileLoading || isAccessLoading
+
   const error = (sessionError || profileError || accessError) as Error | null
 
   const value: AuthContextType = {

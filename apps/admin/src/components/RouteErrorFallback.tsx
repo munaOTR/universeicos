@@ -24,6 +24,21 @@ export function RouteErrorFallback() {
     }
   } else if (error instanceof Error) {
     if (
+      error.message.includes('Failed to fetch dynamically imported module') ||
+      error.name === 'ChunkLoadError'
+    ) {
+      // Chunk load errors happen on new deployments. Auto-reload once.
+      if (!sessionStorage.getItem('chunkLoadReloaded')) {
+        sessionStorage.setItem('chunkLoadReloaded', 'true')
+        window.location.reload()
+        return null
+      } else {
+        sessionStorage.removeItem('chunkLoadReloaded')
+        title = 'Update Available'
+        description =
+          'A new version of the application is available. Please hard refresh your browser.'
+      }
+    } else if (
       error.message.includes('Missing or invalid required environment variables') ||
       error.message.includes('Missing Supabase environment variables')
     ) {

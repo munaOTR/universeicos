@@ -11,39 +11,7 @@ import { AdminLoginPage } from './pages/auth/AdminLoginPage'
 import { AuthCallback } from './pages/auth/AuthCallback'
 import { SetPasswordPage } from './pages/auth/SetPasswordPage'
 
-// Admin Pages (Lazy loaded)
-const DashboardPage = lazy(() =>
-  import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage }))
-)
-const UsersPage = lazy(() => import('./pages/UsersPage').then(m => ({ default: m.UsersPage })))
-const GamificationPage = lazy(() =>
-  import('./pages/GamificationPage').then(m => ({ default: m.GamificationPage }))
-)
-const WaitlistPage = lazy(() =>
-  import('./pages/WaitlistPage').then(m => ({ default: m.WaitlistPage }))
-)
-const ReferralsPage = lazy(() =>
-  import('./pages/ReferralsPage').then(m => ({ default: m.ReferralsPage }))
-)
-const AnnouncementsPage = lazy(() =>
-  import('./pages/AnnouncementsPage').then(m => ({ default: m.AnnouncementsPage }))
-)
-const SurveysPage = lazy(() =>
-  import('./pages/SurveysPage').then(m => ({ default: m.SurveysPage }))
-)
-const EmailsPage = lazy(() =>
-  import('./pages/email-center/EmailCenterPage').then(m => ({ default: m.EmailCenterPage }))
-)
-const AnalyticsPage = lazy(() =>
-  import('./pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage }))
-)
-const MonitoringPage = lazy(() =>
-  import('./pages/MonitoringPage').then(m => ({ default: m.MonitoringPage }))
-)
-const SettingsPage = lazy(() =>
-  import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage }))
-)
-const LogsPage = lazy(() => import('./pages/LogsPage').then(m => ({ default: m.LogsPage })))
+// Admin Pages (Lazy loaded) will use route.lazy()
 
 function NotFoundPage() {
   return (
@@ -103,10 +71,12 @@ export const router = createBrowserRouter([
   {
     path: '/auth/callback',
     element: <AuthCallback />,
+    errorElement: <RouteErrorFallback />,
   },
   {
     path: '/auth/set-password',
     element: <SetPasswordPage />,
+    errorElement: <RouteErrorFallback />,
   },
   {
     path: ROUTES.ADMIN,
@@ -121,18 +91,59 @@ export const router = createBrowserRouter([
     ),
     errorElement: <RouteErrorFallback />,
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: ROUTES.ADMIN_USERS, element: <UsersPage /> },
-      { path: ROUTES.ADMIN_GAMIFICATION, element: <GamificationPage /> },
-      { path: ROUTES.ADMIN_WAITLIST, element: <WaitlistPage /> },
-      { path: ROUTES.ADMIN_REFERRALS, element: <ReferralsPage /> },
-      { path: ROUTES.ADMIN_ANNOUNCEMENTS, element: <AnnouncementsPage /> },
-      { path: ROUTES.ADMIN_SURVEYS, element: <SurveysPage /> },
-      { path: ROUTES.ADMIN_EMAILS, element: <EmailsPage /> },
-      { path: ROUTES.ADMIN_ANALYTICS, element: <AnalyticsPage /> },
-      { path: ROUTES.ADMIN_MONITORING, element: <MonitoringPage /> },
-      { path: ROUTES.ADMIN_SETTINGS, element: <SettingsPage /> },
-      { path: ROUTES.ADMIN_LOGS, element: <LogsPage /> },
+      {
+        index: true,
+        lazy: () => import('./pages/DashboardPage').then(m => ({ Component: m.DashboardPage })),
+      },
+      {
+        path: ROUTES.ADMIN_USERS,
+        lazy: () => import('./pages/UsersPage').then(m => ({ Component: m.UsersPage })),
+      },
+      {
+        path: ROUTES.ADMIN_GAMIFICATION,
+        lazy: () =>
+          import('./pages/GamificationPage').then(m => ({ Component: m.GamificationPage })),
+      },
+      {
+        path: ROUTES.ADMIN_WAITLIST,
+        lazy: () => import('./pages/WaitlistPage').then(m => ({ Component: m.WaitlistPage })),
+      },
+      {
+        path: ROUTES.ADMIN_REFERRALS,
+        lazy: () => import('./pages/ReferralsPage').then(m => ({ Component: m.ReferralsPage })),
+      },
+      {
+        path: ROUTES.ADMIN_ANNOUNCEMENTS,
+        lazy: () =>
+          import('./pages/AnnouncementsPage').then(m => ({ Component: m.AnnouncementsPage })),
+      },
+      {
+        path: ROUTES.ADMIN_SURVEYS,
+        lazy: () => import('./pages/SurveysPage').then(m => ({ Component: m.SurveysPage })),
+      },
+      {
+        path: ROUTES.ADMIN_EMAILS,
+        lazy: () =>
+          import('./pages/email-center/EmailCenterPage').then(m => ({
+            Component: m.EmailCenterPage,
+          })),
+      },
+      {
+        path: ROUTES.ADMIN_ANALYTICS,
+        lazy: () => import('./pages/AnalyticsPage').then(m => ({ Component: m.AnalyticsPage })),
+      },
+      {
+        path: ROUTES.ADMIN_MONITORING,
+        lazy: () => import('./pages/MonitoringPage').then(m => ({ Component: m.MonitoringPage })),
+      },
+      {
+        path: ROUTES.ADMIN_SETTINGS,
+        lazy: () => import('./pages/SettingsPage').then(m => ({ Component: m.SettingsPage })),
+      },
+      {
+        path: ROUTES.ADMIN_LOGS,
+        lazy: () => import('./pages/LogsPage').then(m => ({ Component: m.LogsPage })),
+      },
       {
         path: '/admin/notifications',
         element: (
