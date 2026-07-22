@@ -12,13 +12,24 @@ export interface VerifyEmailProps {
 
 export function VerifyEmail({
   name = 'Student',
-  verifyUrl = 'https://universeicos.app/auth/verify',
+  verifyUrl = 'https://universeicos.app/auth/callback',
   expiresInHours = 24,
 }: VerifyEmailProps) {
   return (
-    <UniverseLayout preview="Verify your email address to complete your Universe registration." unsubscribeUrl={null}>
+    <UniverseLayout
+      preview="Verify your email address to complete your Universe registration."
+      unsubscribeUrl={null}
+    >
       <Section style={{ marginBottom: '28px' }}>
-        <Text style={{ fontSize: '28px', fontWeight: '800', color: BRAND.textDark, margin: '0 0 8px', lineHeight: '1.2' }}>
+        <Text
+          style={{
+            fontSize: '28px',
+            fontWeight: '800',
+            color: BRAND.textDark,
+            margin: '0 0 8px',
+            lineHeight: '1.2',
+          }}
+        >
           Verify your email ✉️
         </Text>
         <Text style={{ fontSize: '16px', color: BRAND.textMid, margin: '0', lineHeight: '1.6' }}>
@@ -26,8 +37,11 @@ export function VerifyEmail({
         </Text>
       </Section>
 
-      <Text style={{ fontSize: '15px', color: BRAND.textMid, lineHeight: '1.7', margin: '0 0 28px' }}>
-        Click the button below to verify your email address and complete your Universe registration. This link expires in {expiresInHours} hours.
+      <Text
+        style={{ fontSize: '15px', color: BRAND.textMid, lineHeight: '1.7', margin: '0 0 28px' }}
+      >
+        Click the button below to verify your email address and complete your Universe registration.
+        This link expires in {expiresInHours} hours.
       </Text>
 
       <EmailButton href={verifyUrl} variant="primary" fullWidth>
@@ -35,11 +49,15 @@ export function VerifyEmail({
       </EmailButton>
 
       <EmailCallout variant="warning" title={`Link expires in ${expiresInHours} hours`}>
-        For security, this verification link will expire. If it expires, you can request a new one from the login page.
+        For security, this verification link will expire. If it expires, you can request a new one
+        from the login page.
       </EmailCallout>
 
-      <Text style={{ fontSize: '13px', color: BRAND.textLight, margin: '24px 0 0', lineHeight: '1.6' }}>
-        If you didn't create a Universe account, you can safely ignore this email. Someone may have typed your email address by mistake.
+      <Text
+        style={{ fontSize: '13px', color: BRAND.textLight, margin: '24px 0 0', lineHeight: '1.6' }}
+      >
+        If you didn't create a Universe account, you can safely ignore this email. Someone may have
+        typed your email address by mistake.
       </Text>
     </UniverseLayout>
   )

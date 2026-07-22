@@ -84,6 +84,18 @@ export const router = createBrowserRouter([
     errorElement: <RouteErrorFallback />,
   },
   {
+    // Alias: Supabase dashboard redirect URL may point here
+    path: '/auth/verify',
+    element: <AuthCallback />,
+    errorElement: <RouteErrorFallback />,
+  },
+  {
+    // Alias: magic link default in email templates
+    path: '/auth/magic',
+    element: <AuthCallback />,
+    errorElement: <RouteErrorFallback />,
+  },
+  {
     element: <AuthLayout />,
     errorElement: <RouteErrorFallback />,
     children: [{ path: ROUTES.LOGIN, element: <LoginPage /> }],

@@ -12,13 +12,24 @@ export interface MagicLinkEmailProps {
 
 export function MagicLinkEmail({
   name = 'Student',
-  magicUrl = 'https://universeicos.app/auth/magic',
+  magicUrl = 'https://universeicos.app/auth/callback',
   expiresInMinutes = 15,
 }: MagicLinkEmailProps) {
   return (
-    <UniverseLayout preview="Your Universe login link — use it within 15 minutes." unsubscribeUrl={null}>
+    <UniverseLayout
+      preview="Your Universe login link — use it within 15 minutes."
+      unsubscribeUrl={null}
+    >
       <Section style={{ marginBottom: '28px' }}>
-        <Text style={{ fontSize: '28px', fontWeight: '800', color: BRAND.textDark, margin: '0 0 8px', lineHeight: '1.2' }}>
+        <Text
+          style={{
+            fontSize: '28px',
+            fontWeight: '800',
+            color: BRAND.textDark,
+            margin: '0 0 8px',
+            lineHeight: '1.2',
+          }}
+        >
           Your login link ✨
         </Text>
         <Text style={{ fontSize: '16px', color: BRAND.textMid, margin: '0', lineHeight: '1.6' }}>
@@ -26,8 +37,11 @@ export function MagicLinkEmail({
         </Text>
       </Section>
 
-      <Text style={{ fontSize: '15px', color: BRAND.textMid, lineHeight: '1.7', margin: '0 0 28px' }}>
-        No password needed. Click the button below to log in. This link is single-use and expires in {expiresInMinutes} minutes.
+      <Text
+        style={{ fontSize: '15px', color: BRAND.textMid, lineHeight: '1.7', margin: '0 0 28px' }}
+      >
+        No password needed. Click the button below to log in. This link is single-use and expires in{' '}
+        {expiresInMinutes} minutes.
       </Text>
 
       <EmailButton href={magicUrl} variant="primary" fullWidth>
@@ -35,10 +49,13 @@ export function MagicLinkEmail({
       </EmailButton>
 
       <EmailCallout variant="warning" title={`Expires in ${expiresInMinutes} minutes`}>
-        This login link can only be used once. If it expires, return to the login page to request a new one.
+        This login link can only be used once. If it expires, return to the login page to request a
+        new one.
       </EmailCallout>
 
-      <Text style={{ fontSize: '13px', color: BRAND.textLight, margin: '24px 0 0', lineHeight: '1.6' }}>
+      <Text
+        style={{ fontSize: '13px', color: BRAND.textLight, margin: '24px 0 0', lineHeight: '1.6' }}
+      >
         If you didn't request this login link, you can safely ignore this email.
       </Text>
     </UniverseLayout>
