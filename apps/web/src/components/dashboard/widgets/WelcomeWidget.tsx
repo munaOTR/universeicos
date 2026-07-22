@@ -8,10 +8,12 @@ export function WelcomeWidget() {
   const { data: profile, isLoading } = useProfile(user?.id)
 
   const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Student'
-  
+
   // Calculate a mock profile completion percentage for MVP
   const fields = ['full_name', 'university', 'faculty', 'department', 'phone']
-  const completedFields = fields.filter(f => profile?.[f as keyof typeof profile]).length
+  const completedFields = profile
+    ? fields.filter(f => profile[f as keyof typeof profile]).length
+    : 0
   const completionPercent = Math.round((completedFields / fields.length) * 100)
 
   return (
@@ -22,9 +24,7 @@ export function WelcomeWidget() {
             <h2 className="text-2xl font-bold text-zinc-900 tracking-tight">
               Good day, {displayName}.
             </h2>
-            <p className="text-sm text-zinc-500">
-              Here's what's happening in your Universe today.
-            </p>
+            <p className="text-sm text-zinc-500">Here's what's happening in your Universe today.</p>
           </div>
 
           {!isLoading && profile && (
@@ -38,7 +38,7 @@ export function WelcomeWidget() {
                   <span className="text-xs font-bold text-primary-600">{completionPercent}%</span>
                 </div>
                 <div className="h-1.5 w-full bg-zinc-200 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-primary-500 rounded-full transition-all duration-1000 ease-out"
                     style={{ width: `${completionPercent}%` }}
                   />

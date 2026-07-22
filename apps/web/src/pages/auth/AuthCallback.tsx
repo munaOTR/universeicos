@@ -7,11 +7,21 @@ import { useInteractionState } from '../../hooks/useInteractionState'
 
 export function AuthCallback() {
   const navigate = useNavigate()
-  const [error, setError] = useState<string | null>(null)
+
+  const searchParams = new URLSearchParams(window.location.search)
+  const errorParam = searchParams.get('error')
+  const errorDescription = searchParams.get('error_description')
+
+  const [error, setError] = useState<string | null>(errorDescription || errorParam)
   const { markInteraction } = useInteractionState()
 
   useEffect(() => {
     let mounted = true
+
+    if (errorParam || errorDescription) {
+      return // Skip processing if Supabase already sent an error
+    }
+
     const supabase = getSupabaseClient()
 
     const handleSuccess = (session: any) => {
@@ -41,7 +51,6 @@ export function AuthCallback() {
       }
     }
 
-    const searchParams = new URLSearchParams(window.location.search)
     const tokenHash = searchParams.get('token_hash')
     const type = searchParams.get('type') as 'recovery' | 'invite' | 'signup' | 'magiclink'
 
